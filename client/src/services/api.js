@@ -3,13 +3,12 @@ import axios from 'axios';
 // Smart Base URL resolver: seamlessly handles local dev, tunnels, and production
 function getApiBaseUrl() {
   if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:5000/api';
+    // If NEXT_PUBLIC_API_URL is explicitly set to an absolute URL, use it
+    if (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')) {
+      return process.env.NEXT_PUBLIC_API_URL;
     }
-    if (hostname.includes('loca.lt')) {
-      return 'https://tasty-oranges-rest.loca.lt/api';
-    }
+    // Otherwise use Next.js internal proxy route for instant, zero-CORS reliability
+    return '/api';
   }
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 }
