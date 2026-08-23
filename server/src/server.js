@@ -15,6 +15,7 @@ const workflowRoutes = require('./routes/workflowRoutes');
 const executionRoutes = require('./routes/executionRoutes');
 const integrationRoutes = require('./routes/integrationRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -54,6 +55,7 @@ app.use('/api/workflows', workflowRoutes);
 app.use('/api/executions', executionRoutes);
 app.use('/api/integrations', integrationRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error Handling Middleware
 app.use(notFound);

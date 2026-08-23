@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Head from 'next/head';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
+import AiAssistant from '../components/AiAssistant';
 import '../styles/globals.css';
 
 export default function App({ Component, pageProps }) {
@@ -20,6 +21,7 @@ export default function App({ Component, pageProps }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Component {...pageProps} />
+      <AiAssistant />
     </>
   );
 }
