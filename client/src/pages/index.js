@@ -289,12 +289,12 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-slate-900 py-10 px-6 lg:px-12 text-center text-xs text-slate-500 font-mono">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 SAGARAGENT_AI Automation Platform. All rights reserved.</p>
+          <p>© 2026 SAGARAGENT_AI. Designed & Engineered by <span className="text-indigo-400 font-bold">Hemasagar Raju</span>.</p>
           <div className="flex items-center gap-6">
+            <a href="https://github.com/Hemasagarraju/sagaragent-ai" target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition">GitHub Repo</a>
             <NextLink href="/dashboard" className="hover:text-slate-300">Dashboard</NextLink>
             <NextLink href="/workflows/builder" className="hover:text-slate-300">AI Studio</NextLink>
             <NextLink href="/integrations" className="hover:text-slate-300">Integrations</NextLink>
-            <NextLink href="/settings" className="hover:text-slate-300">Settings</NextLink>
           </div>
         </div>
       </footer>
