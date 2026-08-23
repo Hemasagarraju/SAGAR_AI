@@ -147,15 +147,15 @@ export default function LandingPage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <NextLink
-            href="/dashboard"
+            href={isAuthenticated ? "/dashboard" : "/login"}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-xl btn-futuristic-laser text-white font-bold text-sm transition group font-mono tracking-wide"
           >
-            <span>LAUNCH OPERATOR CONSOLE</span>
+            <span>{isAuthenticated ? "LAUNCH OPERATOR CONSOLE" : "SIGN IN TO OPERATE PLATFORM"}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </NextLink>
 
           <NextLink
-            href="/workflows/builder"
+            href={isAuthenticated ? "/workflows/builder" : "/login?redirect=%2Fworkflows%2Fbuilder"}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-xl hud-card text-cyan-300 hover:text-white font-semibold text-sm transition font-mono"
           >
             <Sparkles className="w-4 h-4 text-cyan-400" />

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useWorkflowStore } from '../../store/workflowStore';
+import { useAuthStore } from '../../store/authStore';
 import api from '../../services/api';
 import {
   Bot,
@@ -22,10 +23,16 @@ import {
 export default function AiAssistant() {
   const router = useRouter();
   const { setActiveWorkflow } = useWorkflowStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Only render AI Assistant after user is authenticated and not on public auth screens
+  if (!isAuthenticated || router.pathname === '/login' || router.pathname === '/register') {
+    return null;
+  }
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
