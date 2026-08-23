@@ -4,13 +4,7 @@ let socket = null;
 
 function getSocketUrl() {
   if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:5000';
-    }
-    if (hostname.includes('loca.lt')) {
-      return 'https://tasty-oranges-rest.loca.lt';
-    }
+    return window.location.origin;
   }
   return process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 }
