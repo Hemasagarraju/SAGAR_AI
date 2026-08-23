@@ -28,7 +28,8 @@ import {
   ChevronRight,
   Menu,
   X,
-  Radio
+  Radio,
+  ArrowLeft
 } from 'lucide-react';
 
 export default function AppShell({ children, pageTitle = 'Operations' }) {
@@ -89,14 +90,32 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
       {/* Top Navbar */}
       <header className="h-16 border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-6 flex items-center justify-between">
-        {/* Left: Brand & Mobile Toggle */}
-        <div className="flex items-center gap-4">
+        {/* Left: Brand, Back Button & Mobile Toggle */}
+        <div className="flex items-center gap-3 sm:gap-4">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
+
+          {/* Universal Back Button across features */}
+          {router.pathname !== '/dashboard' && (
+            <button
+              onClick={() => {
+                if (window.history.length > 1) {
+                  router.back();
+                } else {
+                  router.push('/dashboard');
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-mono font-medium transition shadow-sm group"
+              title="Return to Previous Feature"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1 text-cyan-400" />
+              <span className="hidden sm:inline">Back</span>
+            </button>
+          )}
 
           <NextLink href="/dashboard" className="transition-transform hover:scale-[1.02]">
             <PlatformLogo size="sm" showBadge={true} textClass="text-sm sm:text-base" />
