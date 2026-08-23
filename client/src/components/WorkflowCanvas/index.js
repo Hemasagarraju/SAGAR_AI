@@ -40,11 +40,13 @@ function CanvasInner({ readOnly = false }) {
   useEffect(() => {
     if (nodes && nodes.length > 0) {
       const timer = setTimeout(() => {
-        fitView({ padding: 0.2, duration: 400 });
-      }, 80);
+        try {
+          fitView({ padding: 0.25, duration: 300 });
+        } catch (e) {}
+      }, 100);
       return () => clearTimeout(timer);
     }
-  }, [nodes?.length, fitView]);
+  }, [nodes, fitView]);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -81,7 +83,11 @@ function CanvasInner({ readOnly = false }) {
   }, [setSelectedNodeId]);
 
   return (
-    <div className="w-full h-full relative" ref={reactFlowWrapper}>
+    <div
+      className="w-full h-full min-h-[520px] relative"
+      ref={reactFlowWrapper}
+      style={{ width: '100%', height: '100%', minHeight: '520px' }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}

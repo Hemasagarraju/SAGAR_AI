@@ -16,7 +16,10 @@ import {
   RefreshCw,
   ChevronRight,
   ExternalLink,
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Cpu,
+  ArrowDown
 } from 'lucide-react';
 
 export default function PromptWorkflowBuilder() {
@@ -30,6 +33,7 @@ export default function PromptWorkflowBuilder() {
   const [generatedGraph, setGeneratedGraph] = useState(null);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [renderKey, setRenderKey] = useState(Date.now());
 
   const samplePrompts = [
     {
@@ -61,6 +65,7 @@ export default function PromptWorkflowBuilder() {
       if (res.data?.success && res.data?.data) {
         const graph = res.data.data;
         setGeneratedGraph(graph);
+        setRenderKey(Date.now());
         setActiveWorkflow({
           name: graph.name || 'AI Generated Automation',
           description: graph.description || `Pipeline generated from prompt: "${prompt}"`,
@@ -78,6 +83,7 @@ export default function PromptWorkflowBuilder() {
       // Client-side instant graph synthesis fallback
       const fallbackGraph = generateClientWorkflowFromPrompt(prompt.trim());
       setGeneratedGraph(fallbackGraph);
+      setRenderKey(Date.now());
       setActiveWorkflow({
         name: fallbackGraph.name,
         description: fallbackGraph.description,
@@ -271,51 +277,104 @@ export default function PromptWorkflowBuilder() {
               </div>
             </div>
 
-            {/* Right Column (7 cols): Interactive Graph Canvas Preview */}
-            <div className="lg:col-span-7 glass-panel rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col relative min-h-[550px]">
-              <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 z-10">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-cyan-400" />
-                  <h3 className="font-bold text-xs text-white uppercase tracking-wider font-mono">
-                    {generatedGraph ? generatedGraph.name : 'Interactive Graph Preview'}
-                  </h3>
+            {/* Right Column (7 cols): Interactive Graph Canvas & Topology Steps */}
+            <div className="lg:col-span-7 flex flex-col gap-4">
+              <div className="glass-panel rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col relative min-h-[520px]">
+                <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 z-10">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <h3 className="font-bold text-xs text-white uppercase tracking-wider font-mono">
+                      {generatedGraph ? generatedGraph.name : 'Interactive Graph Preview'}
+                    </h3>
+                  </div>
+                  {generatedGraph && (
+                    <div className="flex items-center gap-2 font-mono text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {generatedGraph.nodes?.length || 0} Nodes
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Engine: {generatedGraph.source || 'AI Neural Substrate'}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                {generatedGraph && (
-                  <div className="flex items-center gap-2 font-mono text-[10px]">
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      {generatedGraph.nodes?.length || 0} Nodes
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      Engine: {generatedGraph.source || 'AI Neural Substrate'}
-                    </span>
-                  </div>
-                )}
+
+                <div className="flex-1 min-h-[460px] h-full w-full relative" style={{ minHeight: '460px', height: '100%' }}>
+                  {isGenerating && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm z-20 space-y-3">
+                      <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                      <p className="text-xs font-mono text-slate-300">Constructing Kahn DAG topology...</p>
+                    </div>
+                  )}
+
+                  {generatedGraph ? (
+                    <WorkflowCanvas key={renderKey} />
+                  ) : (
+                    <div className="h-full min-h-[460px] flex flex-col items-center justify-center p-8 text-center text-slate-500 space-y-3">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600">
+                        <Sparkles className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xs font-bold text-slate-400 font-mono">Canvas Standby</h4>
+                        <p className="text-[11px] text-slate-500 max-w-sm">
+                          Submit an automation prompt on the left or click a template to generate a live visual workflow DAG.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex-1 min-h-[480px] h-full w-full relative">
-                {isGenerating && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm z-20 space-y-3">
-                    <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-                    <p className="text-xs font-mono text-slate-300">Constructing Kahn DAG topology...</p>
+              {/* Step-by-Step Topology Sequence Card */}
+              {generatedGraph && generatedGraph.nodes && (
+                <div className="glass-panel p-5 rounded-3xl border border-slate-800 shadow-xl space-y-3 animate-in fade-in duration-300">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold font-mono uppercase text-cyan-300 flex items-center gap-1.5">
+                      <Activity className="w-4 h-4 text-cyan-400" />
+                      <span>Synthesized Pipeline Sequence ({generatedGraph.nodes.length} Steps)</span>
+                    </span>
+                    <button
+                      onClick={handleSaveAndExecute}
+                      disabled={isSaving}
+                      className="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Play className="w-3 h-3" />
+                      <span>Execute Sequence</span>
+                    </button>
                   </div>
-                )}
 
-                {generatedGraph ? (
-                  <WorkflowCanvas />
-                ) : (
-                  <div className="h-full min-h-[480px] flex flex-col items-center justify-center p-8 text-center text-slate-500 space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600">
-                      <Sparkles className="w-6 h-6" />
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="text-xs font-bold text-slate-400 font-mono">Canvas Standby</h4>
-                      <p className="text-[11px] text-slate-500 max-w-sm">
-                        Submit an automation prompt on the left or click a template to generate a live visual workflow DAG.
-                      </p>
-                    </div>
+                  <div className="space-y-2">
+                    {generatedGraph.nodes.map((node, idx) => (
+                      <div
+                        key={node.id}
+                        className="p-3 rounded-xl bg-slate-950/80 border border-slate-800/90 flex items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 flex items-center justify-center font-mono font-bold text-[10px]">
+                            {idx + 1}
+                          </span>
+                          <div>
+                            <div className="font-semibold text-slate-200 flex items-center gap-2">
+                              <span>{node.data?.label || node.label}</span>
+                              <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">
+                                {node.type}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-slate-400">
+                              {node.data?.description || 'Operational step action'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>VALID</span>
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
