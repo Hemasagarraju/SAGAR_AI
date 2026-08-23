@@ -74,7 +74,10 @@ export const useAuthStore = create((set, get) => ({
       }
       throw new Error(res.data?.error || 'Login failed');
     } catch (err) {
-      const message = err.response?.data?.error || err.message || 'Authentication error';
+      let message = err.response?.data?.error || err.message || 'Authentication error';
+      if (message === 'Network Error') {
+        message = 'Cannot connect to backend server at http://localhost:5000. Please ensure the backend is running.';
+      }
       set({ error: message, isLoading: false });
       return { success: false, error: message };
     }
@@ -102,7 +105,10 @@ export const useAuthStore = create((set, get) => ({
       }
       throw new Error(res.data?.error || 'Demo login failed');
     } catch (err) {
-      const message = err.response?.data?.error || err.message || 'Demo login error';
+      let message = err.response?.data?.error || err.message || 'Demo login error';
+      if (message === 'Network Error') {
+        message = 'Cannot connect to backend server at http://localhost:5000. Please ensure the backend is running.';
+      }
       set({ error: message, isLoading: false });
       return { success: false, error: message };
     }

@@ -9,10 +9,10 @@ function getSocketUrl() {
       return 'http://localhost:5000';
     }
     if (hostname.includes('loca.lt')) {
-      return 'https://fine-ghosts-write.loca.lt';
+      return window.location.origin;
     }
   }
-  return process.env.NEXT_PUBLIC_SOCKET_URL || 'https://api.hemasagar.ai';
+  return process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 }
 
 export function getSocket() {
