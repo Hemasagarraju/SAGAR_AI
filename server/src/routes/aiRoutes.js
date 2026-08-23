@@ -10,7 +10,7 @@ const { protect } = require('../middleware/authMiddleware');
  */
 router.post('/assistant', async (req, res) => {
   try {
-    const { message, conversationHistory = [] } = req.body;
+    const { message, conversationHistory = [], userName } = req.body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, error: 'Message is required.' });
@@ -18,6 +18,7 @@ router.post('/assistant', async (req, res) => {
 
     const trimmed = message.trim();
     const lower = trimmed.toLowerCase();
+    const effectiveUserName = userName || (req.user ? req.user.name : 'Operator');
 
     // Precise intent classification: Detect if user explicitly wants to synthesize a DAG graph
     const isWorkflowRequest = 
@@ -55,7 +56,7 @@ router.post('/assistant', async (req, res) => {
         workflowGraph.nodes.map((n, i) => `${i + 1}. **${n.data.label}** (${n.type}) — *${n.data.description}*`).join('\n') +
         `\n\nClick **"Apply to AI Studio Canvas"** below to load this DAG directly into your canvas editor and execute it with real integrations.`;
     } else {
-      const qRes = await aiService.answerQuestion(trimmed, conversationHistory);
+      const qRes = await aiService.answerQuestion(trimmed, conversationHistory, effectiveUserName);
       if (typeof qRes === 'object' && qRes !== null) {
         reply = qRes.reply;
         source = qRes.source || source;

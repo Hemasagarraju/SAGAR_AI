@@ -17,7 +17,9 @@ import {
 export default function AiAssistant() {
   const router = useRouter();
   const { setActiveWorkflow } = useWorkflowStore();
-  const { isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+
+  const currentUserName = user?.name || 'Operator';
 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -26,7 +28,7 @@ export default function AiAssistant() {
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `👋 Greetings, Operator! I am **SAGARAGENT_AI Copilot**, your universal operations & AI assistant.\n\nI can answer **ANY question** (coding, algorithms, AI models, security) and **automatically generate visual DAG workflows** from natural language prompts.\n\nWhat would you like to build or ask today?`,
+      text: `👋 Greetings, **${currentUserName}**! I am **SAGARAGENT_AI Copilot**, your universal operations & AI assistant.\n\nI can answer **ANY question** (coding, algorithms, AI models, security) and **automatically generate visual DAG workflows** from natural language prompts.\n\nWhat would you like to build or ask today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       latencyMs: 8,
       source: 'neural-substrate',
@@ -62,7 +64,10 @@ export default function AiAssistant() {
     setIsLoading(true);
 
     try {
-      const res = await api.post('/ai/assistant', { message: text });
+      const res = await api.post('/ai/assistant', {
+        message: text,
+        userName: currentUserName
+      });
       if (res.data?.success) {
         const botData = res.data.data;
         const botMsg = {
@@ -81,7 +86,7 @@ export default function AiAssistant() {
     } catch (err) {
       console.warn('AI Assistant Network Retry/Fallback:', err);
       // Resilient local intelligent fallback response so user is never stranded
-      const fallbackReply = generateClientFallbackReply(text);
+      const fallbackReply = generateClientFallbackReply(text, currentUserName);
       const fallbackMsg = {
         id: `bot-${Date.now()}`,
         sender: 'assistant',
@@ -295,8 +300,38 @@ export default function AiAssistant() {
 }
 
 // Client-Side Resilient Fallback Generator (Ensures Copilot ALWAYS answers smoothly)
-function generateClientFallbackReply(query) {
+function generateClientFallbackReply(query, userName = 'Operator') {
   const q = query.toLowerCase();
+
+  // Greetings
+  if (
+    q === 'hi' ||
+    q === 'hello' ||
+    q === 'hey' ||
+    q === 'hii' ||
+    q === 'hiii' ||
+    q === 'hey there' ||
+    q.startsWith('hi ') ||
+    q.startsWith('hello ') ||
+    q.startsWith('hey ') ||
+    q.includes('good morning') ||
+    q.includes('good evening') ||
+    q.includes('good afternoon') ||
+    q.includes('how are you') ||
+    q.includes('whats up') ||
+    q.includes("what's up") ||
+    q.includes('namaste')
+  ) {
+    return {
+      reply: `👋 Hi **${userName}**! How can I help you today?\n\n` +
+        `I am your **SAGARAGENT_AI Copilot**, ready to assist you with:\n` +
+        `• ⚡ **Automated Workflow Generation** (*"Build a customer triage pipeline with Slack & Sheets"*)\n` +
+        `• 🧠 **Multi-Agent Architecture** (*"How do the Planner, Executor & Validator agents coordinate?"*)\n` +
+        `• 💻 **Coding & Debugging Solutions** (*"Explain Python vs JavaScript for backend microservices"*)\n` +
+        `• 🔒 **Security & AES-256 Vault Encryption** (*"How are sensitive credentials encrypted?"*)\n\n` +
+        `What would you like to build or ask today, ${userName}?`
+    };
+  }
 
   if (q.includes('hemasagar') || q.includes('who created') || q.includes('who made') || q.includes('author')) {
     return {

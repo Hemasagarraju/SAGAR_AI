@@ -462,7 +462,7 @@ class AIService {
   /**
    * Universal Conversational AI Assistant Question Answerer
    */
-  async answerQuestion(message, conversationHistory = []) {
+  async answerQuestion(message, conversationHistory = [], userName = 'Operator') {
     if (!message || !message.trim()) {
       return {
         reply: 'Please enter a question, code prompt, or automation requirement.',
@@ -471,14 +471,46 @@ class AIService {
     }
 
     const trimmed = message.trim();
+    const qLower = trimmed.toLowerCase();
+
+    // Check greeting locally first for instant, personalized, warm response with user's name
+    if (
+      qLower === 'hi' ||
+      qLower === 'hello' ||
+      qLower === 'hey' ||
+      qLower === 'hii' ||
+      qLower === 'hiii' ||
+      qLower === 'hey there' ||
+      qLower.startsWith('hi ') ||
+      qLower.startsWith('hello ') ||
+      qLower.startsWith('hey ') ||
+      qLower.includes('good morning') ||
+      qLower.includes('good evening') ||
+      qLower.includes('good afternoon') ||
+      qLower.includes('how are you') ||
+      qLower.includes('whats up') ||
+      qLower.includes("what's up") ||
+      qLower.includes('namaste')
+    ) {
+      return {
+        reply: `👋 Hi **${userName}**! How can I help you today?\n\n` +
+          `I am your **SAGARAGENT_AI Copilot**, ready to assist you with:\n` +
+          `• ⚡ **Automated Workflow Generation** (*"Build a customer triage pipeline with Slack & Sheets"*)\n` +
+          `• 🧠 **Multi-Agent Architecture** (*"How do the Planner, Executor & Validator agents coordinate?"*)\n` +
+          `• 💻 **Coding & Debugging Solutions** (*"Explain Python vs JavaScript for backend microservices"*)\n` +
+          `• 🔒 **Security & AES-256 Vault Encryption** (*"How are sensitive credentials encrypted?"*)\n\n` +
+          `What would you like to build or ask today, ${userName}?`,
+        source: 'sagaragent-neural-kernel'
+      };
+    }
 
     // 1. Try Gemini if API key is provided
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const systemPrompt = `You are SAGARAGENT_AI Copilot, an omniscient, hyper-intelligent autonomous AI operations architect, software engineer, and universal assistant created by Hemasagar Raju.
-Answer ANY question asked by the user (general knowledge, science, mathematics, coding, system design, workflows, philosophy, writing, debugging) accurately, informatively, and concisely with markdown formatting, code blocks, and bullet points.`;
+        const systemPrompt = `You are SAGARAGENT_AI Copilot, an omniscient, hyper-intelligent autonomous AI operations architect, software engineer, and universal assistant created by Hemasagar Raju. The current authenticated user's name is "${userName}".
+Answer ANY question asked by the user accurately, informatively, and concisely with markdown formatting, code blocks, and bullet points.`;
         
         const prompt = `${systemPrompt}\n\nUser Question: ${trimmed}`;
         const response = await model.generateContent(prompt);
@@ -504,7 +536,7 @@ Answer ANY question asked by the user (general knowledge, science, mathematics, 
             messages: [
               {
                 role: 'system',
-                content: 'You are SAGARAGENT_AI Copilot, an omniscient, hyper-intelligent autonomous AI operations architect, software engineer, and universal assistant created by Hemasagar Raju. Answer ANY question asked with clear markdown formatting, code snippets, and operational guidance.'
+                content: `You are SAGARAGENT_AI Copilot, an omniscient, hyper-intelligent autonomous AI operations architect created by Hemasagar Raju. The current operator's name is "${userName}". Answer ANY question asked with clear markdown formatting and operational guidance.`
               },
               { role: 'user', content: trimmed }
             ],
@@ -533,24 +565,32 @@ Answer ANY question asked by the user (general knowledge, science, mathematics, 
 
     // 3. Comprehensive Multi-Domain Local Knowledge Engine
     return {
-      reply: this._answerFromLocalKnowledge(trimmed),
+      reply: this._answerFromLocalKnowledge(trimmed, userName),
       source: 'sagaragent-neural-kernel'
     };
   }
 
-  _answerFromLocalKnowledge(query) {
+  _answerFromLocalKnowledge(query, userName = 'Operator') {
     const q = query.toLowerCase();
 
     // Greetings
-    if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
-      return `👋 Hello, Operator! I am **SAGARAGENT_AI Copilot**, your universal autonomous operations and AI assistant.\n\n` +
-        `I am ready to answer **any question** you have across:\n` +
-        `• ⚡ **Automation & DAG Workflows** (Gmail, Slack, Discord, Google Sheets)\n` +
+    if (
+      q === 'hi' ||
+      q === 'hello' ||
+      q === 'hey' ||
+      q === 'hii' ||
+      q.startsWith('hi ') ||
+      q.startsWith('hello ') ||
+      q.includes('good morning') ||
+      q.includes('namaste')
+    ) {
+      return `👋 Hi **${userName}**! How can I help you today?\n\n` +
+        `I am your **SAGARAGENT_AI Copilot**, ready to help you with:\n` +
+        `• ⚡ **Automating DAG Workflows** (Gmail, Slack, Discord, Google Sheets)\n` +
         `• 🧠 **Multi-Agent Systems & AI Reasoning** (Planner, Executor, Validator, Recovery, Monitor)\n` +
         `• 💻 **Software Engineering & Coding** (JavaScript, Python, Next.js, Node.js, SQL, REST APIs)\n` +
-        `• 🔒 **Security, Encryption & Cloud Infrastructure** (AES-256-GCM, WebSockets, BullMQ)\n` +
-        `• 🌍 **General Science, Mathematics & Knowledge**\n\n` +
-        `Ask me anything!`;
+        `• 🔒 **Security, Encryption & Cloud Infrastructure** (AES-256-GCM, WebSockets, BullMQ)\n\n` +
+        `How can I assist you right now, ${userName}?`;
     }
 
     // Creator / Author
