@@ -9,7 +9,7 @@ function getSocketUrl() {
       return 'http://localhost:5000';
     }
     if (hostname.includes('loca.lt')) {
-      return window.location.origin;
+      return 'https://stupid-carrots-greet.loca.lt';
     }
   }
   return process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
