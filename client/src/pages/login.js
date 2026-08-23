@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import PlatformLogo from '../components/PlatformLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -44,15 +45,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
+      {/* Top Floating Controls */}
+      <div className="absolute top-6 right-6 z-20">
+        <ThemeSwitcher />
+      </div>
+
       {/* Glow Orbs */}
       <div className="absolute -top-20 -left-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl -z-10" />
       <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-cyan-600/20 rounded-full blur-3xl -z-10" />
 
       {/* Header Logo */}
       <div className="mb-8 text-center space-y-2 flex flex-col items-center">
-        <NextLink href="/" className="inline-flex items-center gap-3 group transition-transform hover:scale-105">
+        <div className="inline-flex items-center gap-3">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
-        </NextLink>
+        </div>
         <p className="text-xs text-slate-400 font-mono">Agentic Operations Console Login</p>
       </div>
 
