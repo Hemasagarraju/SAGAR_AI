@@ -8,7 +8,7 @@ function getApiBaseUrl() {
       return 'http://localhost:5000/api';
     }
     if (hostname.includes('loca.lt')) {
-      return 'https://stupid-carrots-greet.loca.lt/api';
+      return 'https://tasty-oranges-rest.loca.lt/api';
     }
   }
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
