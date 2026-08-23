@@ -7,6 +7,7 @@ import { useWorkflowStore } from '../../store/workflowStore';
 import { getSocket, joinUserRoom } from '../../services/socket';
 import PlatformLogo from '../PlatformLogo';
 import ThemeSwitcher from '../ThemeSwitcher';
+import AiAssistant from '../AiAssistant';
 import {
   LayoutDashboard,
   GitFork,
@@ -381,6 +382,9 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
           </div>
         </div>
       )}
+
+      {/* Floating AI Copilot Assistant (Authenticated Sessions Only) */}
+      <AiAssistant />
     </div>
   );
 }
