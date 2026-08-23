@@ -2,6 +2,8 @@
 
 An enterprise-grade, distributed AI automation platform powered by autonomous multi-agent pipelines (Planner, Execution, Validation, Recovery, and Monitoring), real-time DAG telemetry, AES-256 encrypted credential vaults, and seamless third-party tool integrations.
 
+👉 **Live Demo Web App**: **[https://metallic-cure-installation-animation.trycloudflare.com](https://metallic-cure-installation-animation.trycloudflare.com)** *(Instant access — No password required)*
+
 ---
 
 ## 🌟 Key Architecture & Capabilities
