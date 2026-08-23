@@ -6,7 +6,17 @@ const { validate } = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
-// All workflow routes require authentication
+// AI Prompt Generation is accessible for instant synthesis
+router.post(
+  '/generate',
+  [
+    body('prompt').trim().notEmpty().withMessage('Automation prompt text is required'),
+    validate
+  ],
+  workflowController.generateWorkflow
+);
+
+// Protected routes requiring authentication
 router.use(protect);
 
 router.get('/dashboard', workflowController.getDashboard);
@@ -30,15 +40,6 @@ router.post(
     validate
   ],
   workflowController.createWorkflow
-);
-
-router.post(
-  '/generate',
-  [
-    body('prompt').trim().notEmpty().withMessage('Automation prompt text is required'),
-    validate
-  ],
-  workflowController.generateWorkflow
 );
 
 router.get(

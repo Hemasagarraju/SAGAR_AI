@@ -91,7 +91,8 @@ class WorkflowController {
   async generateWorkflow(req, res, next) {
     try {
       const { prompt } = req.body;
-      const generatedGraph = await aiService.generateWorkflow(prompt, { userId: req.user._id });
+      const userId = req.user ? (req.user._id || req.user.id) : null;
+      const generatedGraph = await aiService.generateWorkflow(prompt, { userId });
       return res.status(200).json({
         success: true,
         data: generatedGraph
