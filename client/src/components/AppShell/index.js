@@ -6,6 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useWorkflowStore } from '../../store/workflowStore';
 import { getSocket, joinUserRoom } from '../../services/socket';
 import PlatformLogo from '../PlatformLogo';
+import ThemeSwitcher from '../ThemeSwitcher';
 import {
   LayoutDashboard,
   GitFork,
@@ -126,6 +127,9 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>Generate with AI</span>
           </NextLink>
+
+          {/* Multi-Color Theme Studio Switcher */}
+          <ThemeSwitcher />
 
           {/* Notifications Trigger */}
           <button

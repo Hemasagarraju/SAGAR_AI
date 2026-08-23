@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
 import Head from 'next/head';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 import '../styles/globals.css';
 
 export default function App({ Component, pageProps }) {
   const { initializeAuth } = useAuthStore();
+  const { initializeTheme } = useThemeStore();
 
   useEffect(() => {
     initializeAuth();
-  }, [initializeAuth]);
+    initializeTheme();
+  }, [initializeAuth, initializeTheme]);
 
   return (
     <>

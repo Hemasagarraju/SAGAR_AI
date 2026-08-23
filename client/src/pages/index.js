@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import PlatformLogo from '../components/PlatformLogo';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import {
   Sparkles,
   Zap,
@@ -92,6 +93,9 @@ export default function LandingPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Theme Switcher */}
+          <ThemeSwitcher />
+
           {isAuthenticated ? (
             <NextLink
               href="/dashboard"
