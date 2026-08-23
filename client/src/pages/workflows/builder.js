@@ -383,102 +383,203 @@ export default function PromptWorkflowBuilder() {
   );
 }
 
-// Client-Side Intelligent Graph Synthesizer
+// Client-Side Intelligent Graph Synthesizer with Exact Entity Extraction
 function generateClientWorkflowFromPrompt(promptText) {
   const p = promptText.toLowerCase();
   const nodes = [];
   const edges = [];
 
+  // Extract exact entities from prompt
+  const emailMatch = promptText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  const targetEmail = emailMatch ? emailMatch[0] : 'team-leads@enterprise.com';
+
+  const channelMatch = promptText.match(/#[a-zA-Z0-9_-]+/);
+  const targetChannel = channelMatch ? channelMatch[0] : '#ops-alerts';
+
+  const thresholdMatch = promptText.match(/\$([0-9]+(?:\.[0-9]+)?)/) || promptText.match(/([0-9]+)\s*(?:dollars|usd|tickets|urgency)/i);
+  const conditionThreshold = thresholdMatch ? thresholdMatch[1] : '1000';
+
+  // Derive concise workflow title
+  let name = 'Custom Operations Automation';
+  if (p.includes('invoice') && p.includes('approval')) name = 'Invoice Approval & Payment Pipeline';
+  else if (p.includes('ticket') || p.includes('support') || p.includes('triage')) name = 'Customer Support Ticket Triage';
+  else if (p.includes('incident') || p.includes('alert')) name = 'Incident Escalation & Alert Flow';
+  else if (p.includes('digest') || p.includes('daily')) name = 'Automated Daily Operational Digest';
+  else if (p.includes('lead') || p.includes('sales')) name = 'Lead Processing & CRM Ingestion';
+  else if (p.includes('sentiment')) name = 'Sentiment Analysis & Escalation';
+  else {
+    const words = promptText.trim().split(/\s+/).slice(0, 5).join(' ');
+    name = words.length > 0 ? `${words.charAt(0).toUpperCase() + words.slice(1)} Pipeline` : 'Custom AI Automation';
+  }
+
   // 1. Initial Trigger Node
+  let triggerType = 'manual';
+  let triggerLabel = 'Manual Trigger';
+  let triggerDesc = 'Initiates automation workflow pipeline on demand';
+  let triggerConfig = { mode: 'on_demand' };
+
+  if (p.includes('webhook') || p.includes('api call') || p.includes('arrives') || p.includes('incoming') || p.includes('ticket arrives')) {
+    triggerType = 'webhook';
+    triggerLabel = 'Incoming Webhook Listener';
+    triggerDesc = 'Listens for real-time inbound HTTP POST webhook events';
+    triggerConfig = { webhookPath: '/v1/events/inbound', method: 'POST' };
+  } else if (p.includes('schedule') || p.includes('every') || p.includes('daily') || p.includes('morning') || p.includes('hourly')) {
+    triggerType = 'schedule';
+    triggerLabel = 'Scheduled Cron Trigger';
+    triggerDesc = 'Fires automatically on a configured recurring schedule';
+    triggerConfig = { cronSchedule: '0 9 * * 1-5', timezone: 'UTC' };
+  }
+
   nodes.push({
-    id: 'node_trigger_1',
+    id: 'node_1',
     type: 'trigger',
     position: { x: 250, y: 80 },
     data: {
-      label: p.includes('webhook') ? 'Incoming Webhook' : 'Manual Trigger',
-      action: p.includes('webhook') ? 'webhook' : 'manual',
-      description: 'Initiates automation workflow pipeline',
-      config: {}
+      label: triggerLabel,
+      action: triggerType,
+      config: triggerConfig,
+      description: triggerDesc
     }
   });
 
   let currentY = 220;
 
   // 2. AI Reasoning Agent Node
-  if (p.includes('ai') || p.includes('evaluate') || p.includes('analyze') || p.includes('sentiment') || p.includes('parse')) {
+  if (p.includes('ai') || p.includes('eval') || p.includes('analy') || p.includes('sentiment') || p.includes('parse') || p.includes('summar') || p.includes('classif') || p.includes('triage') || p.includes('urgency')) {
+    let aiAction = 'analyze';
+    let aiLabel = 'AI Operational Reasoning';
+    let aiDesc = 'Analyzes payload context with LLM and extracts structured entities';
+
+    if (p.includes('sentiment')) {
+      aiAction = 'sentimentAnalysis';
+      aiLabel = 'AI Sentiment & Urgency Analysis';
+      aiDesc = 'Evaluates customer tone, satisfaction score, and ticket urgency';
+    } else if (p.includes('parse') || p.includes('vendor') || p.includes('invoice')) {
+      aiAction = 'extractEntities';
+      aiLabel = 'AI Document & Entity Parser';
+      aiDesc = 'Parses vendor name, line items, and invoice amount from payload';
+    } else if (p.includes('classif') || p.includes('triage')) {
+      aiAction = 'classify';
+      aiLabel = 'AI Ticket Classifier';
+      aiDesc = 'Categorizes ticket priority into P1/P2/P3 with recommended action';
+    }
+
     nodes.push({
-      id: `node_ai_${nodes.length + 1}`,
+      id: `node_${nodes.length + 1}`,
       type: 'aiAgent',
       position: { x: 250, y: currentY },
       data: {
-        label: 'AI Operational Reasoning',
-        action: 'reasoning',
-        description: 'Evaluates inputs with LLM and extracts entities',
-        config: { model: 'gemini-1.5-flash', promptTemplate: 'Analyze input payload' }
+        label: aiLabel,
+        action: aiAction,
+        config: {
+          prompt: `Evaluate incoming payload: "${promptText}"`,
+          model: 'gemini-1.5-flash',
+          expectedFields: ['summary', 'sentiment', 'urgency', 'priority', 'amount', 'vendor']
+        },
+        description: aiDesc
       }
     });
     currentY += 140;
   }
 
-  // 3. Condition Filter Node
-  if (p.includes('if ') || p.includes('exceeds') || p.includes('filter') || p.includes('priority')) {
+  // 3. Condition / Route Filter Node
+  if (p.includes('if ') || p.includes('exceeds') || p.includes('greater') || p.includes('condition') || p.includes('priority') || p.includes('urgent') || p.includes('threshold')) {
+    let condExpr = `{{inputs.amount}} > ${conditionThreshold}`;
+    if (p.includes('high') || p.includes('priority') || p.includes('urgent')) {
+      condExpr = `{{node_2.output.priority}} === "HIGH" || {{inputs.urgency}} >= 8`;
+    }
+
     nodes.push({
-      id: `node_cond_${nodes.length + 1}`,
+      id: `node_${nodes.length + 1}`,
       type: 'condition',
       position: { x: 250, y: currentY },
       data: {
-        label: 'Condition & Route Guard',
+        label: `Condition Filter (${p.includes('exceeds') ? `> $${conditionThreshold}` : 'High Priority'})`,
         action: 'evaluateCondition',
-        description: 'Checks threshold conditions and routes flow',
-        config: { field: 'severity', operator: 'equals', value: 'high' }
+        config: {
+          expression: condExpr,
+          threshold: conditionThreshold,
+          operator: 'greater_than'
+        },
+        description: 'Evaluates rule assertion before dispatching downstream alerts'
       }
     });
     currentY += 140;
   }
 
   // 4. Slack Action Node
-  if (p.includes('slack') || p.includes('alert') || p.includes('channel')) {
+  if (p.includes('slack') || p.includes('alert') || p.includes('channel') || p.includes('notify team')) {
     nodes.push({
-      id: `node_slack_${nodes.length + 1}`,
+      id: `node_${nodes.length + 1}`,
       type: 'slack',
       position: { x: 250, y: currentY },
       data: {
-        label: 'Slack Ops Channel Alert',
+        label: `Slack Channel (${targetChannel})`,
         action: 'sendMessage',
-        description: 'Broadcasting structured operational alert',
-        config: { channel: '#ops-alerts', message: '{{node_ai_2.output}}' }
+        config: {
+          channel: targetChannel,
+          message: `⚡ *SAGARAGENT Alert*: Event processed.\n> Summary: {{node_2.output.summary || "Action required"}}\n> Priority: {{node_2.output.priority || "NORMAL"}}`
+        },
+        description: `Posts formatted operational updates directly to ${targetChannel}`
       }
     });
     currentY += 140;
   }
 
   // 5. Gmail Action Node
-  if (p.includes('email') || p.includes('gmail') || p.includes('notify') || p.includes('mail')) {
+  if (p.includes('email') || p.includes('mail') || p.includes('gmail') || p.includes('approval') || p.includes('notify client') || p.includes('send to')) {
     nodes.push({
-      id: `node_gmail_${nodes.length + 1}`,
+      id: `node_${nodes.length + 1}`,
       type: 'gmail',
       position: { x: 250, y: currentY },
       data: {
-        label: 'Gmail Dispatch Node',
+        label: `Gmail Dispatch (${targetEmail})`,
         action: 'sendEmail',
-        description: 'Dispatches HTML operational email',
-        config: { to: 'operator@enterprise.com', subject: 'Automated Agent Dispatch' }
+        config: {
+          to: targetEmail,
+          subject: `Automated Notification: ${name}`,
+          body: `<p>Automated operation triggered from SAGARAGENT_AI.</p><p><strong>Details:</strong> {{node_2.output.summary || "Event completed successfully."}}</p>`
+        },
+        description: `Sends HTML notification email to ${targetEmail} via Gmail API`
       }
     });
     currentY += 140;
   }
 
-  // 6. Google Sheets Action Node
-  if (p.includes('sheet') || p.includes('sheets') || p.includes('log') || p.includes('ledger') || p.includes('row')) {
+  // 6. Discord Action Node
+  if (p.includes('discord') || p.includes('announcement') || p.includes('community')) {
     nodes.push({
-      id: `node_sheets_${nodes.length + 1}`,
+      id: `node_${nodes.length + 1}`,
+      type: 'discord',
+      position: { x: 250, y: currentY },
+      data: {
+        label: 'Discord Webhook Dispatcher',
+        action: 'sendMessage',
+        config: {
+          channelId: 'ops-announcements',
+          message: '📢 **Operations Notification**: Automation pipeline triggered.'
+        },
+        description: 'Dispatches real-time embed alerts to Discord server'
+      }
+    });
+    currentY += 140;
+  }
+
+  // 7. Google Sheets Action Node
+  if (p.includes('sheet') || p.includes('sheets') || p.includes('ledger') || p.includes('spreadsheet') || p.includes('audit') || p.includes('log row') || p.includes('record')) {
+    nodes.push({
+      id: `node_${nodes.length + 1}`,
       type: 'googleSheets',
       position: { x: 250, y: currentY },
       data: {
-        label: 'Google Sheets Ledger',
+        label: 'Google Sheets Audit Ledger',
         action: 'appendRow',
-        description: 'Appends immutable audit record to spreadsheet',
-        config: { spreadsheetId: 'ops-ledger-master', range: 'Sheet1!A:E' }
+        config: {
+          spreadsheetId: 'ops_master_ledger',
+          range: 'AuditLog!A:E',
+          values: ['{{execution.id}}', '{{execution.timestamp}}', 'COMPLETED', '{{node_2.output.summary || "Logged"}}']
+        },
+        description: 'Appends immutable audit record row to Google Sheets spreadsheet'
       }
     });
     currentY += 140;
@@ -491,14 +592,14 @@ function generateClientWorkflowFromPrompt(promptText) {
       source: nodes[i].id,
       target: nodes[i + 1].id,
       animated: true,
-      label: 'Next'
+      label: i === 0 ? 'Trigger Stream' : (nodes[i].type === 'condition' ? 'Condition Passed' : 'Next Step')
     });
   }
 
   return {
-    name: 'AI Generated Automation',
-    description: `Pipeline compiled from prompt: "${promptText}"`,
-    tags: ['ai-studio', 'kahn-dag'],
+    name,
+    description: `Automated agent pipeline generated for requirement: "${promptText}"`,
+    tags: ['ai-studio', 'kahn-dag', 'multi-agent'],
     nodes,
     edges,
     source: 'sagaragent-neural-kernel'
