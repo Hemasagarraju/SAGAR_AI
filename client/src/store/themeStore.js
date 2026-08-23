@@ -2,6 +2,15 @@ import { create } from 'zustand';
 
 export const THEMES = [
   {
+    id: 'pure-white',
+    name: 'Pure White (Light)',
+    badge: 'CLEAN LIGHT',
+    colors: ['#ffffff', '#3b82f6'],
+    accentBg: 'from-blue-600 to-indigo-600',
+    glowColor: 'rgba(59, 130, 246, 0.2)',
+    borderClass: 'border-slate-300'
+  },
+  {
     id: 'cyber-indigo',
     name: 'Cyber Indigo',
     badge: 'DEFAULT',
@@ -58,11 +67,11 @@ export const THEMES = [
 ];
 
 export const useThemeStore = create((set, get) => ({
-  currentTheme: 'cyber-indigo',
+  currentTheme: 'pure-white',
 
   initializeTheme: () => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sagaragent_theme') || 'cyber-indigo';
+      const saved = localStorage.getItem('sagaragent_theme') || 'pure-white';
       set({ currentTheme: saved });
       document.documentElement.setAttribute('data-theme', saved);
     }
