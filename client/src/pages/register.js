@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
+import PlatformLogo from '../components/PlatformLogo';
 import { Sparkles, Lock, Mail, User, Shield, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -42,14 +43,9 @@ export default function RegisterPage() {
       <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-cyan-600/20 rounded-full blur-3xl -z-10" />
 
       {/* Header Logo */}
-      <div className="mb-8 text-center space-y-2">
-        <NextLink href="/" className="inline-flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 p-0.5 shadow-glow-indigo">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-            </div>
-          </div>
-          <span className="font-extrabold tracking-tight text-white font-mono text-xl">SAGARAGENT_AI</span>
+      <div className="mb-8 text-center space-y-2 flex flex-col items-center">
+        <NextLink href="/" className="inline-flex items-center gap-3 group transition-transform hover:scale-105">
+          <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </NextLink>
         <p className="text-xs text-slate-400 font-mono">Provision New Operator Credentials</p>
       </div>

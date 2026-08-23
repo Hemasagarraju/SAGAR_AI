@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
+import PlatformLogo from '../components/PlatformLogo';
 import {
   Sparkles,
   Zap,
@@ -79,19 +80,9 @@ export default function LandingPage() {
 
       {/* Top Navbar */}
       <nav className="h-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 px-6 lg:px-12 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 p-0.5 shadow-glow-indigo">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-            </div>
-          </div>
-          <div>
-            <span className="font-extrabold tracking-tight text-white font-mono text-lg">SAGARAGENT_AI</span>
-            <span className="text-[10px] ml-2 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
-              OPERATIONS
-            </span>
-          </div>
-        </div>
+        <NextLink href="/" className="transition-transform hover:scale-105">
+          <PlatformLogo size="md" textClass="text-lg font-black" />
+        </NextLink>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
           <a href="#agents" className="hover:text-white transition">Agent Chain</a>

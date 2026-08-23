@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useAuthStore } from '../../store/authStore';
 import { useWorkflowStore } from '../../store/workflowStore';
 import { getSocket, joinUserRoom } from '../../services/socket';
+import PlatformLogo from '../PlatformLogo';
 import {
   LayoutDashboard,
   GitFork,
@@ -95,19 +96,8 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <NextLink href="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 p-0.5 shadow-glow-indigo transition-transform group-hover:scale-105">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-cyan-400" />
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold tracking-tight text-white font-mono text-sm sm:text-base">SAGARAGENT_AI</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">v1.0</span>
-              </div>
-              <p className="text-[10px] text-slate-400 leading-none">Autonomous Multi-Agent Orchestrator</p>
-            </div>
+          <NextLink href="/dashboard" className="transition-transform hover:scale-[1.02]">
+            <PlatformLogo size="sm" showBadge={true} textClass="text-sm sm:text-base" />
           </NextLink>
         </div>
 
