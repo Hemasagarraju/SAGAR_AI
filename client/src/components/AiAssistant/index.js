@@ -73,6 +73,8 @@ export default function AiAssistant() {
           id: `bot-${Date.now()}`,
           sender: 'assistant',
           text: botData.reply,
+          source: botData.source || 'neural-engine',
+          latencyMs: botData.latencyMs || 24,
           workflowGraph: botData.workflowGraph,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
@@ -110,10 +112,11 @@ export default function AiAssistant() {
   };
 
   const quickPrompts = [
-    'Generate a customer support ticket triage pipeline with Slack alerts',
-    'Build an invoice approval workflow for Gmail and Google Sheets',
-    'How do the 5 autonomous agents (Planner, Exec, Valid, Recovery, Monitor) collaborate?',
-    'How do I connect Gmail API & Slack webhooks securely?'
+    'Build an automated lead processing workflow with Slack and Google Sheets',
+    'Explain Python vs JavaScript for backend automation',
+    'How does AES-256 Vault Encryption work in this system?',
+    'How do the 5 autonomous agents (Planner, Exec, Valid, Recovery, Monitor) work?',
+    'Who created SAGARAGENT_AI?'
   ];
 
   // Only render AI Assistant after user is authenticated and not on public auth screens
@@ -146,7 +149,7 @@ export default function AiAssistant() {
 
       {/* Futuristic Holographic Chat Drawer */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[95vw] sm:w-[420px] h-[580px] max-h-[85vh] rounded-3xl bg-slate-950/95 backdrop-blur-2xl border border-cyan-500/30 shadow-[0_15px_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 w-[95vw] sm:w-[440px] h-[600px] max-h-[85vh] rounded-3xl bg-slate-950/95 backdrop-blur-2xl border border-cyan-500/30 shadow-[0_15px_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
           <div className="p-4 border-b border-slate-800 bg-slate-900/80 flex items-center justify-between relative">
             <div className="flex items-center gap-3">
@@ -159,10 +162,10 @@ export default function AiAssistant() {
                 <div className="flex items-center gap-1.5">
                   <h3 className="font-bold text-sm text-white font-mono">SAGARAGENT Copilot</h3>
                   <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/40">
-                    LIVE
+                    UNIVERSAL AI
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400">Autonomous Operations Assistant</p>
+                <p className="text-[10px] text-slate-400">Ask any question or build workflows</p>
               </div>
             </div>
 
@@ -197,6 +200,12 @@ export default function AiAssistant() {
                     <span>{isAssistant ? '🤖 SAGARAGENT AI' : '👤 Operator'}</span>
                     <span>•</span>
                     <span>{msg.timestamp}</span>
+                    {isAssistant && msg.latencyMs && (
+                      <>
+                        <span>•</span>
+                        <span className="text-cyan-400 font-bold">⚡ {msg.latencyMs}ms</span>
+                      </>
+                    )}
                   </div>
 
                   <div

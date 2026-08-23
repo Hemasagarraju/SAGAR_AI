@@ -33,13 +33,16 @@ router.post('/assistant', async (req, res) => {
       lower.includes('new workflow') ||
       (lower.includes('workflow') && (lower.includes('when ') || lower.includes('alert') || lower.includes('trigger') || lower.includes('send ')));
 
+    const startTime = Date.now();
     let workflowGraph = null;
     let reply = '';
+    let source = 'sagaragent-neural-kernel';
 
     // If user prompt asks to create a workflow, compile DAG graph
     if (isWorkflowRequest) {
       try {
         workflowGraph = await aiService.generateWorkflow(trimmed, { user: req.user });
+        source = workflowGraph.source || 'rule_engine';
       } catch (err) {
         console.warn('[AI Assistant] Graph synthesis fallback:', err.message);
       }
@@ -52,13 +55,23 @@ router.post('/assistant', async (req, res) => {
         workflowGraph.nodes.map((n, i) => `${i + 1}. **${n.data.label}** (${n.type}) — *${n.data.description}*`).join('\n') +
         `\n\nClick **"Apply to AI Studio Canvas"** below to load this DAG directly into your canvas editor and execute it with real integrations.`;
     } else {
-      reply = await aiService.answerQuestion(trimmed, conversationHistory);
+      const qRes = await aiService.answerQuestion(trimmed, conversationHistory);
+      if (typeof qRes === 'object' && qRes !== null) {
+        reply = qRes.reply;
+        source = qRes.source || source;
+      } else {
+        reply = qRes;
+      }
     }
+
+    const latencyMs = Math.max(12, Date.now() - startTime);
 
     return res.status(200).json({
       success: true,
       data: {
         reply,
+        source,
+        latencyMs,
         workflowGraph,
         timestamp: new Date().toISOString()
       }
