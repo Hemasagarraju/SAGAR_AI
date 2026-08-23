@@ -28,11 +28,6 @@ export default function AiAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // Only render AI Assistant after user is authenticated and not on public auth screens
-  if (!isAuthenticated || router.pathname === '/login' || router.pathname === '/register') {
-    return null;
-  }
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
@@ -120,6 +115,11 @@ export default function AiAssistant() {
     'How do the 5 autonomous agents (Planner, Exec, Valid, Recovery, Monitor) collaborate?',
     'How do I connect Gmail API & Slack webhooks securely?'
   ];
+
+  // Only render AI Assistant after user is authenticated and not on public auth screens
+  if (!isAuthenticated || router.pathname === '/login' || router.pathname === '/register') {
+    return null;
+  }
 
   return (
     <>
