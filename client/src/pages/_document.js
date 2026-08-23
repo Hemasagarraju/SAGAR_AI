@@ -25,7 +25,8 @@ export default function Document() {
         <meta name="twitter:title" content="SAGARAGENT_AI — Autonomous Multi-Agent Automation Platform" />
         <meta name="twitter:description" content="Transform plain English operational requirements into executable visual DAG workflows with 5 cooperating AI agents." />
         
-        <meta name="theme-color" content="#4f46e5" />
+        <meta name="theme-color" content="#06b6d4" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className="bg-slate-950 text-slate-100 antialiased min-h-screen">

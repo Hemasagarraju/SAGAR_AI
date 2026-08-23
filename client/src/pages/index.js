@@ -125,44 +125,47 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-mono">
+      <section className="py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto text-center space-y-8 relative">
+        {/* Futuristic Laser Horizon Line */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent blur-xs pointer-events-none" />
+
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 text-xs font-mono shadow-[0_0_15px_rgba(6,182,212,0.25)]">
           <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span>Next-Generation Multi-Agent Automation Engine</span>
+          <span>AUTONOMOUS MULTI-AGENT SUBSTRATE v2.0</span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-5xl mx-auto leading-tight">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white max-w-5xl mx-auto leading-tight drop-shadow-[0_0_25px_rgba(6,182,212,0.2)]">
           Turn Plain Language into <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-violet-400">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-300 to-fuchsia-400">
             Autonomous Agentic Workflows
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-          Describe any operations workflow in natural language. Watch SAGARAGENT_AI generate the complete visual DAG, orchestrate cooperating AI agents (Planner, Executor, Validator, Recovery, Monitor), and execute live actions across Gmail, Slack, Discord, and Google Sheets.
+        <p className="text-base sm:text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed font-sans">
+          Describe any operations workflow in natural language. Watch SAGARAGENT_AI compile visual DAG graphs, orchestrate 5 cooperating AI agents (Planner, Executor, Validator, Recovery, Monitor), and execute live actions across Gmail, Slack, Discord, and Google Sheets.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <NextLink
             href="/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-sm shadow-glow-indigo transition group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-xl btn-futuristic-laser text-white font-bold text-sm transition group font-mono tracking-wide"
           >
-            <span>Launch Operator Console</span>
+            <span>LAUNCH OPERATOR CONSOLE</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </NextLink>
 
           <NextLink
             href="/workflows/builder"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl glass-panel text-slate-200 hover:text-white hover:border-slate-700 font-semibold text-sm transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-xl hud-card text-cyan-300 hover:text-white font-semibold text-sm transition font-mono"
           >
             <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span>Try AI Prompt Studio</span>
+            <span>TRY AI PROMPT STUDIO</span>
           </NextLink>
         </div>
 
         {/* Live Architecture Showcase */}
         <div className="pt-12">
-          <div className="glass-panel p-6 lg:p-8 rounded-3xl border border-slate-800 shadow-2xl text-left space-y-6">
+          <div className="hud-card p-6 lg:p-8 rounded-3xl text-left space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex gap-1.5">
