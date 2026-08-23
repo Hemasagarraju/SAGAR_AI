@@ -1,0 +1,230 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  oldPrice: number;
+  image: string;
+  liked: boolean;
+}
+
+interface CartItem extends Product {
+  quantity: number;
+}
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+
+  storeName = 'MyStore';
+
+  searchText = '';
+
+  cartOpen = false;
+
+  cart: CartItem[] = [];
+
+  categories = [
+    { name: 'Fashion', icon: '👕' },
+    { name: 'Electronics', icon: '📱' },
+    { name: 'Home', icon: '🏠' },
+    { name: 'Gaming', icon: '🎮' }
+  ];
+
+  products: Product[] = [
+
+    {
+      id: 1,
+      name: 'Wireless Headphones',
+      category: 'Electronics',
+      price: 2999,
+      oldPrice: 4999,
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
+      liked: false
+    },
+
+    {
+      id: 2,
+      name: 'Smart Watch',
+      category: 'Electronics',
+      price: 3499,
+      oldPrice: 5999,
+      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
+      liked: false
+    },
+
+    {
+      id: 3,
+      name: 'Running Shoes',
+      category: 'Fashion',
+      price: 2499,
+      oldPrice: 3999,
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff',
+      liked: false
+    },
+
+    {
+      id: 4,
+      name: 'Premium Backpack',
+      category: 'Fashion',
+      price: 1299,
+      oldPrice: 1999,
+      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62',
+      liked: false
+    },
+
+    {
+      id: 5,
+      name: 'Gaming Controller',
+      category: 'Gaming',
+      price: 1999,
+      oldPrice: 2999,
+      image: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08',
+      liked: false
+    },
+
+    {
+      id: 6,
+      name: 'Modern Chair',
+      category: 'Home',
+      price: 4999,
+      oldPrice: 6999,
+      image: 'https://images.unsplash.com/photo-1503602642458-232111445657',
+      liked: false
+    }
+  ];
+
+
+  get filteredProducts(): Product[] {
+
+    const search = this.searchText
+      .trim()
+      .toLowerCase();
+
+    if (!search) {
+      return this.products;
+    }
+
+    return this.products.filter(product =>
+      product.name.toLowerCase().includes(search) ||
+      product.category.toLowerCase().includes(search)
+    );
+  }
+
+
+  get cartCount(): number {
+
+    return this.cart.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
+  }
+
+
+  get cartTotal(): number {
+
+    return this.cart.reduce(
+      (total, item) =>
+        total + item.price * item.quantity,
+      0
+    );
+  }
+
+
+  addToCart(product: Product): void {
+
+    const existing = this.cart.find(
+      item => item.id === product.id
+    );
+
+    if (existing) {
+
+      existing.quantity++;
+
+    } else {
+
+      this.cart.push({
+        ...product,
+        quantity: 1
+      });
+
+    }
+
+    this.cartOpen = true;
+  }
+
+
+  increaseQuantity(item: CartItem): void {
+
+    item.quantity++;
+
+  }
+
+
+  decreaseQuantity(item: CartItem): void {
+
+    if (item.quantity > 1) {
+
+      item.quantity--;
+
+    } else {
+
+      this.removeFromCart(item.id);
+
+    }
+  }
+
+
+  removeFromCart(id: number): void {
+
+    this.cart = this.cart.filter(
+      item => item.id !== id
+    );
+
+  }
+
+
+  toggleWishlist(product: Product): void {
+
+    product.liked = !product.liked;
+
+  }
+
+
+  selectCategory(category: string): void {
+
+    this.searchText = category;
+
+    document
+      .getElementById('products')
+      ?.scrollIntoView({
+        behavior: 'smooth'
+      });
+  }
+
+
+  checkout(): void {
+
+    if (this.cart.length === 0) {
+
+      alert('Your cart is empty.');
+
+      return;
+    }
+
+    alert(
+      `Order total: ₹${this.cartTotal.toLocaleString('en-IN')}\n\n` +
+      'Connect your payment gateway here.'
+    );
+  }
+
+}

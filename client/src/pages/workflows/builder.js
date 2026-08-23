@@ -1,0 +1,318 @@
+import { useState } from 'react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import ProtectedRoute from '../../components/ProtectedRoute';
+import AppShell from '../../components/AppShell';
+import WorkflowCanvas from '../../components/WorkflowCanvas';
+import { useWorkflowStore } from '../../store/workflowStore';
+import api from '../../services/api';
+import {
+  Sparkles,
+  Play,
+  Save,
+  Layers,
+  ArrowRight,
+  Loader2,
+  Code2,
+  CheckCircle2,
+  Cpu,
+  Bot,
+  RefreshCw,
+  Sliders,
+  ChevronRight,
+  ExternalLink
+} from 'lucide-react';
+
+export default function PromptWorkflowBuilder() {
+  const router = useRouter();
+  const { setActiveWorkflow, saveWorkflow } = useWorkflowStore();
+
+  const [prompt, setPrompt] = useState(
+    'When a high-priority customer ticket arrives via webhook, analyze sentiment with AI, post structured alert to #ops-alerts in Slack, and append audit log row to Google Sheets.'
+  );
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedGraph, setGeneratedGraph] = useState(null);
+  const [error, setError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const samplePrompts = [
+    {
+      title: 'Support Triage & Slack Alert',
+      prompt: 'When a new support inquiry is received, evaluate ticket urgency and customer sentiment with AI, post alert to Slack #ops-alerts, and append to Google Sheets ledger.'
+    },
+    {
+      title: 'Invoice Approval & Email Route',
+      prompt: 'When an invoice arrives via webhook, parse vendor and amount with AI reasoning, if amount exceeds $1000 send approval email to finance@enterprise.com and log to Google Sheets.'
+    },
+    {
+      title: 'Daily Digest & Discord Hub',
+      prompt: 'Every weekday morning at 9am, summarize system operational performance metrics using AI, dispatch announcement to Discord #general, and notify team via Gmail.'
+    },
+    {
+      title: 'Incident Responder Escalation',
+      prompt: 'When server uptime monitor triggers webhook, classify incident severity with AI, post incident alert to Slack #critical-alerts, send urgent email to on-call engineer, and append to incident log.'
+    }
+  ];
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) return;
+
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      const res = await api.post('/workflows/generate', { prompt: prompt.trim() });
+      if (res.data?.success) {
+        const graph = res.data.data;
+        setGeneratedGraph(graph);
+        setActiveWorkflow({
+          name: graph.name || 'AI Generated Automation',
+          description: graph.description || `Pipeline generated from prompt: "${prompt}"`,
+          nodes: graph.nodes,
+          edges: graph.edges,
+          tags: graph.tags || ['ai-generated'],
+          status: 'draft',
+          version: 1
+        });
+      } else {
+        throw new Error(res.data?.error || 'Generation failed');
+      }
+    } catch (err) {
+      console.error('Generation error:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to generate workflow graph.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSaveAndEdit = async () => {
+    if (!generatedGraph) return;
+
+    setIsSaving(true);
+    try {
+      const res = await api.post('/workflows', {
+        name: generatedGraph.name || 'AI Generated Automation',
+        description: generatedGraph.description,
+        nodes: generatedGraph.nodes,
+        edges: generatedGraph.edges,
+        tags: generatedGraph.tags || ['ai-generated'],
+        status: 'draft'
+      });
+
+      if (res.data?.success) {
+        const wf = res.data.data || res.data.workflow;
+        router.push(`/workflows/${wf._id || wf.id}`);
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to save workflow.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAndExecute = async () => {
+    if (!generatedGraph) return;
+
+    setIsSaving(true);
+    try {
+      const saveRes = await api.post('/workflows', {
+        name: generatedGraph.name || 'AI Generated Automation',
+        description: generatedGraph.description,
+        nodes: generatedGraph.nodes,
+        edges: generatedGraph.edges,
+        tags: generatedGraph.tags || ['ai-generated'],
+        status: 'active'
+      });
+
+      if (saveRes.data?.success) {
+        const savedWf = saveRes.data.data || saveRes.data.workflow;
+        const workflowId = savedWf._id || savedWf.id;
+        const execRes = await api.post(`/workflows/${workflowId}/execute`, {
+          inputs: { promptInput: prompt, source: 'ai_studio_direct_run' }
+        });
+        if (execRes.data?.success) {
+          const execObj = execRes.data.data || execRes.data.execution;
+          router.push(`/executions/${execObj._id || execObj.id}`);
+        }
+      }
+    } catch (err) {
+      console.error('Execution error:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to execute workflow.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <ProtectedRoute>
+      <AppShell pageTitle="AI Prompt-to-Workflow Studio">
+        <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto flex flex-col h-[calc(100vh-4rem)]">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                  AI Prompt-to-Workflow Studio
+                </h1>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Describe an operational requirement in plain English. The platform compiles it into an executable visual graph.
+              </p>
+            </div>
+
+            {generatedGraph && (
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={handleSaveAndEdit}
+                  disabled={isSaving}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open in Canvas Editor</span>
+                </button>
+
+                <button
+                  onClick={handleSaveAndExecute}
+                  disabled={isSaving}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold shadow-glow-indigo transition"
+                >
+                  {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
+                  <span>Save & Execute Now</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Main 2-Column Split: Prompt Input & Live Graph Canvas Preview */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0">
+            {/* Left Column (5 cols): Prompt Input & Templates */}
+            <div className="lg:col-span-5 flex flex-col gap-4 overflow-y-auto pr-1">
+              <div className="glass-panel p-5 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold font-mono uppercase text-indigo-300 flex items-center gap-1.5">
+                    <Bot className="w-4 h-4 text-indigo-400" />
+                    <span>Automation Prompt</span>
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
+                    OpenRouter • Gemini • Rules
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <textarea
+                    rows={5}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Describe what steps your automated agent pipeline should take..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 leading-relaxed font-sans"
+                  />
+
+                  <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !prompt.trim()}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-xs shadow-glow-indigo transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Compiling DAG Graph with AI...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        <span>Generate Workflow Graph</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {error && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
+                    {error}
+                  </div>
+                )}
+              </div>
+
+              {/* Suggested Templates */}
+              <div className="glass-panel p-5 rounded-3xl border border-slate-800 shadow-xl space-y-3">
+                <span className="text-[10px] font-bold font-mono uppercase text-slate-400 tracking-wider">
+                  Operational Templates
+                </span>
+                <div className="space-y-2">
+                    {samplePrompts.map((s, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setPrompt(s.prompt);
+                        }}
+                        className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-indigo-500/40 cursor-pointer transition text-xs group"
+                      >
+                        <div className="flex items-center justify-between font-semibold text-slate-200 group-hover:text-white">
+                          <span>{s.title}</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition" />
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                          {s.prompt}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column (7 cols): Interactive Graph Canvas Preview */}
+              <div className="lg:col-span-7 glass-panel rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col relative min-h-[550px]">
+                <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 z-10">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <h3 className="font-bold text-xs text-white uppercase tracking-wider font-mono">
+                      {generatedGraph ? generatedGraph.name : 'Interactive Graph Preview'}
+                    </h3>
+                  </div>
+                  {generatedGraph && (
+                    <div className="flex items-center gap-2 font-mono text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {generatedGraph.nodes?.length || 0} Nodes
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Engine: {generatedGraph.source}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 min-h-[480px] h-full w-full relative">
+                  {isGenerating ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm z-20 space-y-3">
+                      <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                      <p className="text-xs font-mono text-slate-300">Constructing Kahn DAG topology...</p>
+                    </div>
+                  ) : null}
+
+                  {generatedGraph ? (
+                    <WorkflowCanvas />
+                  ) : (
+                    <div className="h-full min-h-[480px] flex flex-col items-center justify-center p-8 text-center text-slate-500 space-y-3">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600">
+                        <Sparkles className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xs font-bold text-slate-400">Canvas Standby</h4>
+                        <p className="text-[11px] text-slate-500 max-w-sm">
+                          Submit an automation prompt on the left or select a template to generate a live visual workflow DAG.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+      </AppShell>
+    </ProtectedRoute>
+  );
+}

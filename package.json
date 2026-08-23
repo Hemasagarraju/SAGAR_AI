@@ -1,0 +1,14 @@
+{
+  "name": "sagaragent-ai-platform",
+  "version": "1.0.0",
+  "description": "SAGARAGENT_AI - Full-Stack Multi-Agent Automation Platform",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "npm --prefix server start & npm --prefix client run dev",
+    "test:pipeline": "npm --prefix server test"
+  },
+  "dependencies": {
+    "mongodb": "^6.12.0"
+  }
+}

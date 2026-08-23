@@ -1,0 +1,31 @@
+{
+  "name": "sagaragent-ai-server",
+  "version": "1.0.0",
+  "description": "SAGARAGENT_AI - Backend Multi-Agent Automation Engine",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "node test-pipeline.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "compression": "^1.8.0",
+    "express-validator": "^7.2.1",
+    "express-rate-limit": "^7.5.0",
+    "socket.io": "^4.8.1",
+    "ioredis": "^5.4.2",
+    "bullmq": "^5.34.8",
+    "dotenv": "^16.4.7",
+    "axios": "^1.7.9",
+    "mongodb-memory-server": "^10.1.3",
+    "@google/generative-ai": "^0.24.0"
+  },
+  "devDependencies": {}
+}
