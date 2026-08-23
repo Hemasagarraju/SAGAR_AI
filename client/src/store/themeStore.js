@@ -4,7 +4,7 @@ export const THEMES = [
   {
     id: 'pure-white',
     name: 'Pure White (Light)',
-    badge: 'CLEAN LIGHT',
+    badge: 'LIGHT',
     colors: ['#ffffff', '#3b82f6'],
     accentBg: 'from-blue-600 to-indigo-600',
     glowColor: 'rgba(59, 130, 246, 0.2)',
@@ -66,6 +66,20 @@ export const THEMES = [
   }
 ];
 
+function applyThemeToDOM(themeId) {
+  if (typeof window === 'undefined') return;
+  const root = document.documentElement;
+  root.setAttribute('data-theme', themeId);
+
+  if (themeId === 'pure-white') {
+    root.classList.remove('dark');
+    root.classList.add('light');
+  } else {
+    root.classList.add('dark');
+    root.classList.remove('light');
+  }
+}
+
 export const useThemeStore = create((set, get) => ({
   currentTheme: 'pure-white',
 
@@ -73,7 +87,7 @@ export const useThemeStore = create((set, get) => ({
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sagaragent_theme') || 'pure-white';
       set({ currentTheme: saved });
-      document.documentElement.setAttribute('data-theme', saved);
+      applyThemeToDOM(saved);
     }
   },
 
@@ -81,7 +95,7 @@ export const useThemeStore = create((set, get) => ({
     set({ currentTheme: themeId });
     if (typeof window !== 'undefined') {
       localStorage.setItem('sagaragent_theme', themeId);
-      document.documentElement.setAttribute('data-theme', themeId);
+      applyThemeToDOM(themeId);
     }
   }
 }));
