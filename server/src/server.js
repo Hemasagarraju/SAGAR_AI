@@ -19,6 +19,7 @@ const aiRoutes = require('./routes/aiRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // Security & Utility Middleware

@@ -469,6 +469,156 @@ class AIService {
       source: graph.source || 'deterministic'
     };
   }
+
+  /**
+   * Universal Conversational AI Assistant Question Answerer
+   */
+  async answerQuestion(message, conversationHistory = []) {
+    if (!message || !message.trim()) {
+      return 'Please enter a question or command.';
+    }
+
+    const trimmed = message.trim();
+
+    // 1. Try Gemini if API key is provided
+    if (env.geminiApiKey) {
+      try {
+        const genAI = new GoogleGenerativeAI(env.geminiApiKey);
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const systemPrompt = `You are SAGARAGENT_AI Copilot, a helpful, hyper-intelligent autonomous AI operations architect and coding assistant created by Hemasagar Raju.
+Answer the user's question clearly, informatively, and concisely with markdown, code snippets, or bullet points where relevant.`;
+        
+        const prompt = `${systemPrompt}\n\nUser Question: ${trimmed}`;
+        const response = await model.generateContent(prompt);
+        const text = response.response.text();
+        if (text && text.trim().length > 0) {
+          return text.trim();
+        }
+      } catch (err) {
+        console.warn('[AIService:Chat] Gemini chat fallback:', err.message);
+      }
+    }
+
+    // 2. Try OpenRouter if API key is provided
+    if (env.openRouterApiKey) {
+      try {
+        const response = await axios.post(
+          'https://openrouter.ai/api/v1/chat/completions',
+          {
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are SAGARAGENT_AI Copilot, a helpful and hyper-intelligent autonomous AI operations architect and software engineer created by Hemasagar Raju. Answer questions with clear markdown formatting, code snippets, and operational guidance.'
+              },
+              { role: 'user', content: trimmed }
+            ],
+            temperature: 0.7
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${env.openRouterApiKey}`,
+              'HTTP-Referer': 'https://sagaragent.ai',
+              'X-Title': 'SAGARAGENT AI'
+            },
+            timeout: 15000
+          }
+        );
+        const reply = response.data?.choices?.[0]?.message?.content;
+        if (reply && reply.trim().length > 0) {
+          return reply.trim();
+        }
+      } catch (err) {
+        console.warn('[AIService:Chat] OpenRouter chat fallback:', err.message);
+      }
+    }
+
+    // 3. Comprehensive Built-in Knowledge Engine
+    return this._answerFromLocalKnowledge(trimmed);
+  }
+
+  _answerFromLocalKnowledge(query) {
+    const q = query.toLowerCase();
+
+    // Greetings
+    if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
+      return `👋 Hello, Operator! I am **SAGARAGENT_AI Copilot**, your autonomous operations assistant.\n\n` +
+        `I am ready to help you with:\n` +
+        `• ⚡ **Generating visual DAG workflows** from natural language prompts\n` +
+        `• 🧠 **Answering architectural & technical questions** (Node.js, Next.js, AI Models, REST APIs)\n` +
+        `• 🔌 **Configuring integrations** (Gmail, Slack, Discord, Google Sheets, Gemini)\n` +
+        `• 🛡️ **Diagnosing execution logs & self-healing recovery**\n\n` +
+        `What would you like to build or discuss today?`;
+    }
+
+    // Creator / Author
+    if (q.includes('who made') || q.includes('who created') || q.includes('creator') || q.includes('author') || q.includes('hemasagar')) {
+      return `🚀 **SAGARAGENT_AI** is engineered and architected by **Hemasagar Raju**!\n\n` +
+        `It is an enterprise-grade Autonomous Multi-Agent Platform built with Next.js 14, Node.js, React Flow, Socket.IO, and AES-256 Vault Encryption.\n\n` +
+        `GitHub: [https://github.com/Hemasagarraju/sagaragent-ai](https://github.com/Hemasagarraju/sagaragent-ai)`;
+    }
+
+    // What can you do / Capabilities
+    if (q.includes('what can you do') || q.includes('help') || q.includes('features') || q.includes('capabilities')) {
+      return `🛠️ **Here is what I can do for you:**\n\n` +
+        `1. **Prompt-to-DAG Compilation**: Turn any English requirement into an executable multi-agent workflow graph with triggers, conditions, and action nodes.\n` +
+        `2. **Multi-Agent Orchestration**: Coordinate 5 specialized agents (Planner, Execution, Validation, Recovery, Monitoring) in sequence.\n` +
+        `3. **1-Click Tool Execution**: Trigger real actions on Gmail, Slack, Discord, Google Sheets, and Gemini LLMs.\n` +
+        `4. **Real-Time Telemetry**: Monitor executions at 60fps over WebSocket connections.\n` +
+        `5. **AES-256 Vault**: Safely store and encrypt your third-party API keys and OAuth secrets.\n\n` +
+        `Ask me anything about automation, integrations, or coding!`;
+    }
+
+    // Agents & Multi-Agent Architecture
+    if (q.includes('agent') || q.includes('planner') || q.includes('kahn') || q.includes('recovery') || q.includes('monitor')) {
+      return `🧠 **SAGARAGENT_AI Multi-Agent Pipeline Substrate:**\n\n` +
+        `• **1. Planner Agent**: Analyzes the DAG graph topology, uses Kahn's algorithm for dependency sorting, verifies cycle-free execution paths, and computes confidence scores.\n` +
+        `• **2. Execution Agent**: Dispatches atomic actions across third-party APIs (Gmail, Slack, Discord, Google Sheets) or AI reasoning models.\n` +
+        `• **3. Validation Agent**: Enforces strict JSON contracts and schema checks before allowing data to flow to downstream nodes.\n` +
+        `• **4. Recovery Agent**: Classifies errors (TRANSIENT, AUTH_EXPIRED, RATE_LIMIT, MISSING_FIELDS) and executes jittered exponential backoff or escalation.\n` +
+        `• **5. Monitoring Agent**: Streams real-time event logs via WebSocket, maintains audit trails, and updates metrics counters.`;
+    }
+
+    // Integrations
+    if (q.includes('integration') || q.includes('slack') || q.includes('gmail') || q.includes('discord') || q.includes('sheets')) {
+      return `🔌 **Third-Party Integrations Hub:**\n\n` +
+        `• **Gmail API**: Send HTML emails with templated variables (` + '`{{node_1.output.summary}}`' + `) and listen for unread emails.\n` +
+        `• **Slack**: Post rich Markdown messages and notifications to public or private channels.\n` +
+        `• **Discord**: Send embed cards and operational alerts via Webhooks.\n` +
+        `• **Google Sheets**: Append rows, read spreadsheets, and maintain real-time audit ledgers.\n` +
+        `• **Google Gemini & OpenRouter**: Run zero-shot classification, sentiment analysis, and summarization.\n\n` +
+        `All keys are encrypted at rest using **AES-256-GCM** in the database.`;
+    }
+
+    // Security & Encryption
+    if (q.includes('security') || q.includes('encrypt') || q.includes('vault') || q.includes('aes') || q.includes('jwt')) {
+      return `🔒 **Enterprise Security Architecture:**\n\n` +
+        `• **AES-256-GCM Encryption**: All OAuth tokens, API secrets, and webhook payloads are encrypted at rest with unique initialization vectors (IV) and authentication tags.\n` +
+        `• **JWT Authentication**: Secure stateless session tokens with role-based access control (Admin / Operator).\n` +
+        `• **Zero-Log Leakage**: Decrypted credentials exist strictly in memory during execution dispatch and never persist in logs.\n` +
+        `• **Strict Data Sandboxing**: Workflows execute in isolated operational contexts.`;
+    }
+
+    // Next.js / Node.js / Full Stack Coding Advice
+    if (q.includes('code') || q.includes('react') || q.includes('next') || q.includes('node') || q.includes('api') || q.includes('javascript') || q.includes('python')) {
+      return `💻 **Engineering & Coding Insight:**\n\n` +
+        `The platform is built on modern full-stack architectures:\n` +
+        `• **Frontend**: Next.js 14, React Flow (@xyflow/react), Zustand state management, Tailwind CSS, Lucide icons.\n` +
+        `• **Backend**: Node.js, Express, Socket.IO real-time engine, Mongoose ODM / In-Memory Mongo fallback.\n` +
+        `• **API Gateway**: Internal Next.js rewrites (` + '`/api/:path*`' + `) for zero-CORS proxying across tunnels and cloud deployments.\n\n` +
+        `Ask me for any specific code snippets, API endpoints, or automation patterns!`;
+    }
+
+    // General default fallback
+    return `⚡ **SAGARAGENT_AI Copilot Response:**\n\n` +
+      `You asked: *"**${query}**"*\n\n` +
+      `Here are the recommended operational insights for your request:\n` +
+      `1. **System Topology**: Ensure all prerequisite nodes and integrations are configured in the **Integrations Hub**.\n` +
+      `2. **Execution Flow**: Use the **AI Prompt-to-Workflow Studio** to automatically compile this requirement into an executable DAG graph.\n` +
+      `3. **Verification**: Once built, click **"Save & Execute"** to observe live step-by-step telemetry streamed by the Monitoring Agent.\n\n` +
+      `Feel free to ask me to generate a specific workflow or explain any technical detail!`;
+  }
 }
 
 module.exports = new AIService();
+
