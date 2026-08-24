@@ -26,7 +26,7 @@ export default function AiAssistant() {
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `👋 Hi **${currentUserName}**! I'm your **ChatGPT-style AI Assistant** powered by Google Gemini AI.\n\nAsk me anything: code generation, debugging, creative writing, prompt crafting, or technical explanations.`,
+      text: `👋 Hi **${currentUserName}**! I'm your **AI Copilot** powered by Google Gemini AI.\n\nAsk me anything: code generation, debugging, creative writing, prompt crafting, or technical explanations.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       source: 'gemini-1.5-flash'
     }
@@ -112,10 +112,10 @@ export default function AiAssistant() {
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white shadow-glow-indigo hover:scale-105 transition duration-300 flex items-center gap-2 group"
-          title="Open ChatGPT Assistant"
+          title="Open AI Copilot"
         >
           <Sparkles className="w-5 h-5 group-hover:rotate-12 transition duration-300" />
-          <span className="text-xs font-extrabold pr-1 hidden sm:inline">ChatGPT AI</span>
+          <span className="text-xs font-extrabold pr-1 hidden sm:inline">AI Copilot</span>
         </button>
       )}
 
@@ -130,10 +130,10 @@ export default function AiAssistant() {
               </div>
               <div>
                 <h3 className="font-bold text-xs text-white flex items-center gap-1.5">
-                  <span>Gemini AI Assistant</span>
+                  <span>SAGAR AI Copilot</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 </h3>
-                <p className="text-[10px] text-slate-400">ChatGPT-Style Conversational Intelligence</p>
+                <p className="text-[10px] text-slate-400">Autonomous Conversational Intelligence</p>
               </div>
             </div>
 

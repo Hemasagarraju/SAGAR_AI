@@ -82,7 +82,7 @@ export default function DashboardPage() {
       cta: 'Open Prompt Studio'
     },
     {
-      title: 'Google Gemini 2.5 Pro Chat',
+      title: 'SAGAR AI Copilot',
       desc: 'Full-screen conversational intelligence with 1M context, code generation, step-by-step reasoning, and persona switching.',
       icon: Bot,
       href: '/chat',
@@ -90,7 +90,7 @@ export default function DashboardPage() {
       borderColor: 'border-fuchsia-500/30 hover:border-fuchsia-500',
       badge: '1M CONTEXT REASONING',
       badgeColor: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
-      cta: 'Start Gemini Chat'
+      cta: 'Launch AI Copilot'
     },
     {
       title: 'AI Multimodal Tools Hub',
@@ -142,7 +142,7 @@ export default function DashboardPage() {
                   className="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm border border-slate-700 transition flex items-center gap-2"
                 >
                   <Bot className="w-4 h-4 text-cyan-400" />
-                  <span>Chat with Gemini</span>
+                  <span>Launch AI Copilot</span>
                 </NextLink>
               </div>
             </div>

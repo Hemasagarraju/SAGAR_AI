@@ -69,7 +69,7 @@ export default function ChatStudioPage() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: `👋 Hello **${user?.name || 'Operator'}**! I am **ChatGPT-style AI Assistant** powered by **Google Gemini AI**.\n\n` +
+      content: `👋 Hello **${user?.name || 'Operator'}**! I am **AI Copilot** powered by **Google Gemini AI**.\n\n` +
         `I am ready to assist you with:\n` +
         `• 💻 **Fullstack Software Engineering & Bug Fixing**\n` +
         `• 🎨 **Master AI Prompt Engineering for Images & Video**\n` +
@@ -186,7 +186,7 @@ export default function ChatStudioPage() {
 
   return (
     <ProtectedRoute>
-      <AppShell pageTitle="ChatGPT AI Assistant">
+      <AppShell pageTitle="AI Copilot">
         <div className="h-[calc(100vh-4.5rem)] flex overflow-hidden">
           {/* ChatGPT Left Sidebar: Sessions & Navigation */}
           <aside className="w-64 border-r border-slate-800 bg-slate-950 p-4 flex flex-col justify-between hidden md:flex shrink-0">

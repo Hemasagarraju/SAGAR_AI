@@ -82,7 +82,7 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
 
   const navItems = [
     { name: 'AI Studio Hub', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'ChatGPT Assistant', href: '/chat', icon: Bot, highlight: true },
+    { name: 'AI Copilot', href: '/chat', icon: Bot, highlight: true },
     { name: 'AI Image Studio', href: '/images', icon: ImageIcon },
     { name: 'AI Prompt Studio', href: '/prompts', icon: PenTool },
     { name: 'AI Tools Hub', href: '/tools', icon: Wrench },
