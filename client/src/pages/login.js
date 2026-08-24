@@ -8,7 +8,7 @@ import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2, Ar
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, demoLogin, adminLogin, isLoading, error, clearError } = useAuthStore();
+  const { login, demoLogin, adminDemoLogin, isLoading, error, clearError } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,13 +43,12 @@ export default function LoginPage() {
     }
   };
 
-  const handleAdminLogin = async () => {
+  const handleAdminDemoLogin = async () => {
     setLocalError('');
     clearError();
-    const res = await adminLogin();
+    const res = await adminDemoLogin();
     if (res.success) {
-      const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/settings';
-      router.push(redirectUrl);
+      router.push('/settings');
     } else {
       setLocalError(res.error || 'Admin login failed');
     }
@@ -81,14 +80,14 @@ export default function LoginPage() {
         <div className="inline-flex items-center gap-3">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </div>
-        <p className="text-xs text-slate-400 font-mono">Generative AI Super App Login</p>
+        <p className="text-xs text-slate-400 font-mono">Generative AI Super App Authentication</p>
       </div>
 
       {/* Login Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-white tracking-tight">Operator Sign In</h2>
-          <p className="text-xs text-slate-400">Enter your operator credentials to access the SAGAR AI Super App.</p>
+          <p className="text-xs text-slate-400">Enter your credentials or use 1-click authentication below.</p>
         </div>
 
         {(localError || error) && (
@@ -106,7 +105,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
-                placeholder="operator@sagar.ai"
+                placeholder="operator@sagar.ai or hemasagarraju94@gmail.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -162,26 +161,28 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* 1-Click Fast Sign In Options */}
+        {/* 1-Click Fast Auth Options */}
         <div className="pt-2 border-t border-slate-800 space-y-2.5">
+          {/* Master Admin 1-Click Access */}
           <button
             type="button"
-            onClick={handleAdminLogin}
+            onClick={handleAdminDemoLogin}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-mono font-bold transition flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.15)]"
+            className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-200 text-xs font-mono font-bold transition flex items-center justify-center gap-2 shadow-sm group"
           >
-            <ShieldCheck className="w-4 h-4 text-purple-300" />
-            <span>👑 1-Click Master Admin Sign In (View All Users)</span>
+            <ShieldCheck className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
+            <span>👑 1-Click Master Admin Sign In (See All Users)</span>
           </button>
 
+          {/* Standard Demo Operator Access */}
           <button
             type="button"
             onClick={handleDemoLogin}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-mono font-medium transition flex items-center justify-center gap-2"
+            className="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-mono transition flex items-center justify-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>⚡ 1-Click Demo Operator Sign In</span>
+            <span>⚡ 1-Click Demo Operator (Features Only)</span>
           </button>
         </div>
 

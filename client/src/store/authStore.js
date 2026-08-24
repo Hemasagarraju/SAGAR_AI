@@ -123,7 +123,7 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  adminLogin: async () => {
+  adminDemoLogin: async () => {
     set({ isLoading: true, error: null });
     try {
       const res = await api.post('/auth/admin-demo');
@@ -143,7 +143,7 @@ export const useAuthStore = create((set, get) => ({
         joinUserRoom(user.id || user._id);
         return { success: true, user };
       }
-      throw new Error(res.data?.error || 'Admin login failed');
+      throw new Error(res.data?.error || 'Admin demo login failed');
     } catch (err) {
       let message = err.response?.data?.error || err.message || 'Admin login error';
       if (message === 'Network Error') {

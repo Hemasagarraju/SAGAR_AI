@@ -219,13 +219,33 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                   <span>Rate Platform Experience</span>
                 </button>
 
+                {user?.role !== 'admin' ? (
+                  <button
+                    onClick={async () => {
+                      setIsUserMenuOpen(false);
+                      const { adminDemoLogin } = useAuthStore.getState();
+                      await adminDemoLogin();
+                      router.push('/settings');
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-purple-300 hover:bg-purple-500/15 transition font-bold"
+                  >
+                    <Shield className="w-4 h-4 text-purple-400" />
+                    <span>👑 Switch to Master Admin</span>
+                  </button>
+                ) : (
+                  <div className="px-3 py-1.5 bg-purple-500/10 text-purple-300 text-[10px] font-mono font-bold flex items-center gap-1.5 border-y border-purple-500/20">
+                    <Shield className="w-3.5 h-3.5 text-purple-400" />
+                    <span>MASTER ADMIN ACTIVE</span>
+                  </div>
+                )}
+
                 <NextLink
                   href="/settings"
                   onClick={() => setIsUserMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition"
                 >
                   <Settings className="w-4 h-4 text-slate-400" />
-                  <span>Account & Keys</span>
+                  <span>Settings & Directory</span>
                 </NextLink>
 
                 <button
