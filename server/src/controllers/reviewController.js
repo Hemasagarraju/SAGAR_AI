@@ -1,4 +1,5 @@
 const Review = require('../models/Review');
+const notificationService = require('../services/notificationService');
 
 class ReviewController {
   // Create or Submit a Review
@@ -37,6 +38,15 @@ class ReviewController {
       };
 
       const review = await Review.create(reviewData);
+
+      if (req.user && req.user._id) {
+        notificationService.createNotification({
+          owner: req.user._id,
+          title: '⭐ Feedback Recorded',
+          message: `Thank you for your ${rating}★ review! Your feedback helps optimize the platform.`,
+          type: 'success'
+        });
+      }
 
       return res.status(201).json({
         success: true,

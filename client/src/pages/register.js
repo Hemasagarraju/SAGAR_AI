@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import PlatformLogo from '../components/PlatformLogo';
-import { Sparkles, Lock, Mail, User, Shield, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Sparkles, Lock, Mail, User, Shield, ArrowRight, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,6 +38,17 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
+      {/* Top Floating Controls: Back to Hub */}
+      <div className="absolute top-6 left-6 z-20">
+        <NextLink
+          href="/dashboard"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-bold font-mono transition shadow-lg group"
+        >
+          <ArrowLeft className="w-4 h-4 text-cyan-400 group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Hub</span>
+        </NextLink>
+      </div>
+
       {/* Glow Orbs */}
       <div className="absolute -top-20 -right-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl -z-10" />
       <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-cyan-600/20 rounded-full blur-3xl -z-10" />

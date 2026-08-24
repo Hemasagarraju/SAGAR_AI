@@ -1,6 +1,7 @@
 const AiImage = require('../models/AiImage');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const env = require('../config/env');
+const notificationService = require('../services/notificationService');
 
 // Dimension helper
 const getDimensions = (aspectRatio) => {
@@ -121,6 +122,15 @@ exports.generateImage = async (req, res) => {
       model: 'Flux.1-Ultra',
       seed
     });
+
+    if (owner) {
+      notificationService.createNotification({
+        owner,
+        title: '🎨 AI Artwork Generated',
+        message: `Your artwork "${prompt.substring(0, 45)}..." was rendered successfully in Flux 8K.`,
+        type: 'success'
+      });
+    }
 
     return res.status(201).json({
       success: true,

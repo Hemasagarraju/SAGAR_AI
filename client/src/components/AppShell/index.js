@@ -114,11 +114,11 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                   router.push('/dashboard');
                 }
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-mono font-medium transition shadow-sm group"
-              title="Return to Previous Feature"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 hover:border-cyan-500/50 text-xs font-bold font-mono transition shadow-sm group"
+              title="Return to Previous Screen / Dashboard"
             >
-              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1 text-cyan-400" />
-              <span className="hidden sm:inline">Back</span>
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 text-cyan-400" />
+              <span>Back</span>
             </button>
           )}
 
@@ -139,7 +139,7 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
 
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/40 border border-indigo-500/20 text-xs text-indigo-300">
             <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-            <span className="font-mono">LangGraph: Available</span>
+            <span className="font-mono">Google Gemini & Flux</span>
           </div>
         </div>
 
@@ -159,11 +159,11 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
           </button>
 
           <NextLink
-            href="/workflows/builder"
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-lg text-xs font-semibold shadow-glow-indigo transition"
+            href="/chat"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl text-xs font-bold shadow-glow-indigo transition"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Generate with AI</span>
+            <Bot className="w-3.5 h-3.5" />
+            <span>AI Copilot</span>
           </NextLink>
 
           {/* Multi-Color Theme Studio Switcher */}
@@ -378,13 +378,23 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
             <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-indigo-400" />
-                <h3 className="font-bold text-sm text-white">Operations Timeline & Alerts</h3>
+                <h3 className="font-bold text-sm text-white">Notifications & Activity</h3>
               </div>
               <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => markNotificationAsRead('all')}
+                    className="text-[11px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1 transition px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20"
+                    title="Mark all notifications as read"
+                  >
+                    <Check className="w-3 h-3" />
+                    <span>Mark Read</span>
+                  </button>
+                )}
                 {notifications.length > 0 && (
                   <button
                     onClick={clearAllNotifications}
-                    className="text-[11px] text-slate-400 hover:text-rose-400 flex items-center gap-1 transition"
+                    className="text-[11px] text-slate-400 hover:text-rose-400 flex items-center gap-1 transition px-1.5 py-0.5 rounded hover:bg-slate-800"
                   >
                     <Trash2 className="w-3 h-3" />
                     <span>Clear</span>
@@ -392,7 +402,7 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                 )}
                 <button
                   onClick={() => toggleNotificationDrawer(false)}
-                  className="p-1 text-slate-400 hover:text-white rounded"
+                  className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800"
                 >
                   <X className="w-4 h-4" />
                 </button>

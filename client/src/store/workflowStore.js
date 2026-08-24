@@ -268,10 +268,17 @@ export const useWorkflowStore = create((set, get) => ({
   markNotificationAsRead: async (id) => {
     try {
       await api.put(`/notifications/${id}/read`);
-      set((state) => ({
-        notifications: state.notifications.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
-        unreadCount: Math.max(0, state.unreadCount - 1)
-      }));
+      if (id === 'all') {
+        set((state) => ({
+          notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
+          unreadCount: 0
+        }));
+      } else {
+        set((state) => ({
+          notifications: state.notifications.map((n) => (n._id === id || n.id === id ? { ...n, isRead: true } : n)),
+          unreadCount: Math.max(0, state.unreadCount - 1)
+        }));
+      }
     } catch (err) {
       console.warn('Failed to mark notification read:', err.message);
     }

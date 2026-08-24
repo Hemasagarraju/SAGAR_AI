@@ -1,6 +1,7 @@
 const SavedPrompt = require('../models/SavedPrompt');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const env = require('../config/env');
+const notificationService = require('../services/notificationService');
 
 const CURATED_TEMPLATES = [
   {
@@ -110,6 +111,15 @@ Output ONLY the optimized prompt. Do not add introductory chit-chat.`;
         `[OUTPUT FORMAT]: Clean markdown formatting with bold highlights and bullet points.`;
     }
 
+    if (req.user && req.user._id) {
+      notificationService.createNotification({
+        owner: req.user._id,
+        title: '✍️ Master Prompt Engineered',
+        message: `Optimized prompt for "${category}" targeting ${targetModel}.`,
+        type: 'info'
+      });
+    }
+
     return res.status(200).json({
       success: true,
       original: trimmed,
@@ -138,34 +148,48 @@ exports.generateSystemPrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const candidateModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemma-4-26b-a4b-it', 'gemma-4-31b-it', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
-        for (const m of candidateModels) {
+        const candidates = [
+          'gemini-3.6-flash',
+          'gemini-3.5-flash',
+          'gemini-3.5-flash-lite',
+          'gemini-3.1-flash-lite',
+          'gemma-4-26b-a4b-it',
+          'gemma-4-31b-it',
+          'gemini-flash-latest',
+          'gemini-3.7-flash',
+          'gemini-pro-latest'
+        ];
+
+        for (const m of candidates) {
           try {
             const model = genAI.getGenerativeModel({ model: m });
-            const resAI = await model.generateContent(
-              `Create a professional system instruction for an AI Agent named "${name}" whose primary mission is "${goal}". Desired tone: "${tone}". Output ONLY the system instruction.`
-            );
-            const text = resAI.response.text();
-            if (text && text.trim().length > 10) {
+            const promptText = `Generate a production-ready AI System Instruction Persona with name "${name}", goal "${goal}", tone "${tone}". Provide pure system instruction text.`;
+            const result = await model.generateContent(promptText);
+            const response = await result.response;
+            const text = response.text();
+            if (text && text.trim()) {
               systemInstruction = text.trim();
               break;
             }
           } catch (err) {
-            console.warn(`[PromptController:SystemPrompt] ${m} fallback:`, err.message);
+            console.warn(`[PromptController] Persona Model ${m} fallback:`, err.message);
           }
         }
-      } catch (err) {
-        console.warn('[PromptController:SystemPrompt] Gemini fallback:', err.message);
+      } catch (e) {
+        console.warn('[PromptController] Gemini persona failed:', e.message);
       }
     }
 
     if (!systemInstruction) {
-      systemInstruction = `You are ${name}, a top-tier specialist dedicated to: ${goal}.\nMaintain a ${tone} demeanor at all times. Deliver concise, factual, and deeply reasoned answers.`;
+      systemInstruction = `You are ${name}, a world-class AI designed to ${goal}.\nMaintain a ${tone} demeanor at all times.\nAnalyze every request thoroughly and output pristine, verified solutions.`;
     }
 
     return res.status(200).json({
       success: true,
-      systemInstruction: systemInstruction.trim()
+      personaName: name,
+      goal,
+      tone,
+      systemInstruction
     });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
@@ -214,6 +238,15 @@ exports.savePrompt = async (req, res) => {
       targetModel: targetModel || 'gemini-1.5-pro',
       tags: tags || []
     });
+
+    if (req.user && req.user._id) {
+      notificationService.createNotification({
+        owner: req.user._id,
+        title: '💾 Prompt Saved to Vault',
+        message: `Saved "${title}" into your prompt vault.`,
+        type: 'success'
+      });
+    }
 
     return res.status(201).json({ success: true, prompt: saved });
   } catch (error) {

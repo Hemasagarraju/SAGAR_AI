@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import PlatformLogo from '../components/PlatformLogo';
 import ThemeSwitcher from '../components/ThemeSwitcher';
-import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function LoginPage() {
       return;
     }
 
-    const res = await login(email.trim(), password);
+    const res = await login(email, password);
     if (res.success) {
       const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/dashboard';
       router.push(redirectUrl);
@@ -45,7 +45,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
-      {/* Top Floating Controls */}
+      {/* Top Floating Controls: Back to Hub & Theme Switcher */}
+      <div className="absolute top-6 left-6 z-20">
+        <NextLink
+          href="/dashboard"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 text-xs font-bold font-mono transition shadow-lg group"
+        >
+          <ArrowLeft className="w-4 h-4 text-cyan-400 group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Hub</span>
+        </NextLink>
+      </div>
+
       <div className="absolute top-6 right-6 z-20">
         <ThemeSwitcher />
       </div>

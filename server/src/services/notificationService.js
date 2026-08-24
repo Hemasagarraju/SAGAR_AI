@@ -1,6 +1,28 @@
 const Notification = require('../models/Notification');
+const { emitUserNotification } = require('../config/socket');
 
 class NotificationService {
+  async createNotification({ owner, title, message, type = 'info', workflowId, executionId }) {
+    if (!owner || !title) return null;
+    try {
+      const notification = await Notification.create({
+        owner,
+        title,
+        message: message || title,
+        type,
+        workflowId,
+        executionId,
+        isRead: false
+      });
+
+      emitUserNotification(owner.toString(), notification);
+      return notification;
+    } catch (err) {
+      console.error('[NotificationService] Error creating notification:', err);
+      return null;
+    }
+  }
+
   async getNotifications(userId, { limit = 30 } = {}) {
     const notifications = await Notification.find({ owner: userId })
       .sort({ createdAt: -1 })
