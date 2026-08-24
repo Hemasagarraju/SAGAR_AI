@@ -69,7 +69,7 @@ exports.optimizePrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
+        const candidateModels = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-3.7-flash', 'gemini-3.1-pro-preview', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
         const systemPrompt = `You are a World-Class Master Prompt Engineer.
 Transform the user's basic prompt into a highly structured, professional, multi-layered prompt designed for ${targetModel} in the "${category}" domain.
 Include:
@@ -138,7 +138,7 @@ exports.generateSystemPrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
+        const candidateModels = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-3.7-flash', 'gemini-3.1-pro-preview', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
         for (const m of candidateModels) {
           try {
             const model = genAI.getGenerativeModel({ model: m });

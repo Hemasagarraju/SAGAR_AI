@@ -50,11 +50,14 @@ async function verifyGeminiApiKey(rawKey) {
 
     // Preference hierarchy for best available model on this key
     const preferredOrder = [
+      'gemini-3.6-flash',
+      'gemini-flash-latest',
+      'gemini-pro-latest',
+      'gemini-3.7-flash',
+      'gemini-3.1-pro-preview',
       'gemini-2.0-flash',
       'gemini-1.5-flash',
       'gemini-1.5-pro',
-      'gemini-1.5-flash-8b',
-      'gemini-2.0-flash-exp',
       'gemini-pro'
     ];
 

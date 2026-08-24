@@ -48,7 +48,7 @@ async function enhancePromptWithGemini(userPrompt, style = 'photorealistic') {
 
   try {
     const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-    const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
+    const candidateModels = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-3.7-flash', 'gemini-3.1-pro-preview', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
 
     const systemInstruction = `You are an elite AI Art Prompt Engineer specializing in Midjourney v6, Flux.1, and DALL-E 3.
 Convert the user's basic prompt into an extraordinary, detailed, visually striking art prompt with specific artistic composition, lighting, camera angles, color palette, and textures.
