@@ -265,17 +265,29 @@ export default function ChatStudioPage() {
           <main className="flex-1 flex flex-col bg-slate-950 justify-between overflow-hidden">
             {/* Top Bar */}
             <div className="h-14 border-b border-slate-800/80 px-4 sm:px-6 flex items-center justify-between bg-slate-900/40 backdrop-blur-md shrink-0">
-              {/* Model Dropdown */}
+              {/* Model Dropdown (Admin Only) or Clean Copilot Badge (Operators) */}
               <div className="flex items-center gap-2">
-                <select
-                  value={selectedModel.id}
-                  onChange={(e) => setSelectedModel(MODELS.find((m) => m.id === e.target.value) || MODELS[0])}
-                  className="bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none focus:border-cyan-500 font-mono cursor-pointer"
-                >
-                  {MODELS.map((m) => (
-                    <option key={m.id} value={m.id}>{m.name} ({m.badge})</option>
-                  ))}
-                </select>
+                {user?.role === 'admin' ? (
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={selectedModel.id}
+                      onChange={(e) => setSelectedModel(MODELS.find((m) => m.id === e.target.value) || MODELS[0])}
+                      className="bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none focus:border-cyan-500 font-mono cursor-pointer"
+                    >
+                      {MODELS.map((m) => (
+                        <option key={m.id} value={m.id}>{m.name} ({m.badge})</option>
+                      ))}
+                    </select>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono font-bold border border-purple-500/30">
+                      ADMIN
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 font-bold">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>SAGAR AI Copilot</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">

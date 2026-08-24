@@ -4,9 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const aiService = require('../services/aiService');
 const env = require('../config/env');
-const { optionalAuth } = require('../middleware/authMiddleware');
+const aiService = require('../services/aiService');
+const { protect, optionalAuth, adminOnly } = require('../middleware/authMiddleware');
 
 /**
  * Sanitize API Key input from user
@@ -152,7 +152,7 @@ router.get('/status', (req, res) => {
  * @route   POST /api/ai/test-key
  * @desc    Test Google AI Studio API Key
  */
-router.post('/test-key', async (req, res) => {
+router.post('/test-key', protect, adminOnly, async (req, res) => {
   try {
     const { apiKey } = req.body;
     const keyToTest = apiKey || env.geminiApiKey;
@@ -186,7 +186,7 @@ router.post('/test-key', async (req, res) => {
  * @route   POST /api/ai/save-key
  * @desc    Save Google AI Studio API key to .env and runtime memory
  */
-router.post('/save-key', async (req, res) => {
+router.post('/save-key', protect, adminOnly, async (req, res) => {
   try {
     const { apiKey } = req.body;
     if (!apiKey || !apiKey.trim()) {
