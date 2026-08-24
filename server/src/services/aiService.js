@@ -483,58 +483,50 @@ class AIService {
    */
   async answerQuestion(message, conversationHistory = [], userName = 'Operator') {
     if (!message || !message.trim()) {
-      return {
-        reply: 'Please enter a question, code prompt, or automation requirement.',
-        source: 'local_engine'
-      };
+      return { reply: 'Please provide a question or instruction.', source: 'sagar-ai' };
     }
 
     const trimmed = message.trim();
-    const qLower = trimmed.toLowerCase();
-
-    // Check greeting locally first for instant, personalized, warm response with user's name
-    if (
-      qLower === 'hi' ||
-      qLower === 'hello' ||
-      qLower === 'hey' ||
-      qLower === 'hii' ||
-      qLower === 'hiii' ||
-      qLower === 'hey there' ||
-      qLower.startsWith('hi ') ||
-      qLower.startsWith('hello ') ||
-      qLower.startsWith('hey ') ||
-      qLower.includes('good morning') ||
-      qLower.includes('good evening') ||
-      qLower.includes('good afternoon') ||
-      qLower.includes('how are you') ||
-      qLower.includes('whats up') ||
-      qLower.includes("what's up") ||
-      qLower.includes('namaste')
-    ) {
-      return {
-        reply: `👋 Hi **${userName}**! How can I help you today?\n\n` +
-          `I am your **SAGAR AI Copilot**, ready to assist you with:\n` +
-          `• 💬 **Conversational Intelligence & Reasoning** (*"Explain Transformer Attention Mechanisms"*)\n` +
-          `• 🎨 **AI Image Prompt Engineering** (*"Craft an 8K Midjourney cyberpunk prompt"*)\n` +
-          `• 💻 **Software Engineering & Coding** (*"Write a WebSocket server with auth in Python"*)\n` +
-          `• ⚡ **Executive Summaries & Translations** (*"Summarize this technical architecture"*)\n\n` +
-          `What would you like to build or ask today, ${userName}?`,
-        source: 'sagar-ai-kernel'
-      };
-    }
 
     // 1. Try Gemini if API key is provided
     if (env.geminiApiKey) {
-      const candidateModels = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-3.7-flash', 'gemini-3.1-pro-preview', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+      const candidateModels = [
+        'gemini-3.6-flash',
+        'gemini-flash-latest',
+        'gemini-pro-latest',
+        'gemini-3.7-flash',
+        'gemini-3.1-pro-preview',
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-pro'
+      ];
       const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-      const systemPrompt = `You are SAGAR AI Copilot, an omniscient, hyper-intelligent conversational AI assistant and software engineer created by Hemasagar Raju. The current authenticated user's name is "${userName}".
-Answer ANY question asked by the user accurately, informatively, and concisely with markdown formatting, code blocks, and bullet points.`;
+      const systemInstruction = `You are SAGAR AI Copilot, a senior expert AI assistant.
+CRITICAL RESPONSE GUIDELINES:
+- Provide DIRECT, HIGHLY ACCURATE, and PROPER answers to the user's specific request.
+- NO UNNECESSARY FILLER: Do not output boilerplate self-introductions (avoid repeating "I am SAGAR AI Copilot..."), conversational fluff, or repetitive pleasantries.
+- Go straight to the answer, solution, or implementation.
+- For coding questions: Provide clean, production-ready code with concise bullet explanations.
+- For general questions: Use crisp bullet points, bold key terms, and concise formatting.`;
+
+      // Build context history
+      let contextPrompt = '';
+      if (Array.isArray(conversationHistory) && conversationHistory.length > 0) {
+        const recentTurns = conversationHistory.slice(-6);
+        contextPrompt = 'Conversation context:\n' +
+          recentTurns.map((t) => `${t.role === 'user' ? 'User' : 'Assistant'}: ${t.content}`).join('\n') +
+          '\n\n';
+      }
 
       for (const modelName of candidateModels) {
         try {
-          const model = genAI.getGenerativeModel({ model: modelName });
-          const prompt = `${systemPrompt}\n\nUser Question: ${trimmed}`;
-          const response = await model.generateContent(prompt);
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            systemInstruction
+          });
+          const fullUserPrompt = `${contextPrompt}User: ${trimmed}`;
+          const response = await model.generateContent(fullUserPrompt);
           const text = response.response.text();
           if (text && text.trim().length > 0) {
             return {
