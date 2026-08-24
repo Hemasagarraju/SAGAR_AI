@@ -58,4 +58,14 @@ const optionalAuth = async (req, res, next) => {
   return next();
 };
 
-module.exports = { protect, optionalAuth };
+const adminOnly = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      error: 'Access restricted: Administrator privileges required.'
+    });
+  }
+  return next();
+};
+
+module.exports = { protect, optionalAuth, adminOnly };
