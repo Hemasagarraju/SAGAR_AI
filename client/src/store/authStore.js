@@ -123,6 +123,37 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  adminLogin: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post('/auth/admin-demo');
+      if (res.data?.success) {
+        const { token, user } = res.data.data || res.data;
+        localStorage.setItem('sagaragent_token', token);
+        localStorage.setItem('sagaragent_user', JSON.stringify(user));
+
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+
+        joinUserRoom(user.id || user._id);
+        return { success: true, user };
+      }
+      throw new Error(res.data?.error || 'Admin login failed');
+    } catch (err) {
+      let message = err.response?.data?.error || err.message || 'Admin login error';
+      if (message === 'Network Error') {
+        message = 'Cannot connect to backend server at http://localhost:5000. Please ensure the backend is running.';
+      }
+      set({ error: message, isLoading: false });
+      return { success: false, error: message };
+    }
+  },
+
   register: async ({ name, email, password, role = 'operator' }) => {
     set({ isLoading: true, error: null });
     try {

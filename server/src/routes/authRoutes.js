@@ -34,6 +34,7 @@ router.post('/login', authLimiter, [
 ], authController.login);
 
 router.post('/demo', authLimiter, authController.demoLogin);
+router.post('/admin-demo', authLimiter, authController.adminDemoLogin);
 
 router.get('/me', protect, authController.getMe);
 router.get('/users', protect, adminOnly, authController.getAllUsers);

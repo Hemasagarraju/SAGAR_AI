@@ -39,6 +39,18 @@ class AuthController {
     }
   }
 
+  async adminDemoLogin(req, res, next) {
+    try {
+      const result = await authService.adminDemoLogin();
+      return res.status(200).json({
+        success: true,
+        data: result
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async getMe(req, res, next) {
     try {
       const profile = await authService.getProfile(req.user._id);

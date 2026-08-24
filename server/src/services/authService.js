@@ -89,6 +89,40 @@ class AuthService {
     };
   }
 
+  async adminDemoLogin() {
+    const adminEmail = 'hemasagarraju94@gmail.com';
+    let user = await User.findOne({ email: adminEmail });
+
+    if (!user) {
+      user = await User.create({
+        name: 'Hemasagar Raju (Master Admin)',
+        email: adminEmail,
+        password: 'password123',
+        role: 'admin',
+        lastLogin: new Date()
+      });
+    } else {
+      user.name = 'Hemasagar Raju (Master Admin)';
+      user.role = 'admin';
+      user.lastLogin = new Date();
+      await user.save();
+    }
+
+    const token = generateToken(user._id);
+
+    return {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt
+      },
+      token
+    };
+  }
+
   async login({ email, password }) {
     const cleanEmail = email.toLowerCase().trim();
     const user = await User.findOne({ email: cleanEmail }).select('+password');

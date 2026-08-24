@@ -8,7 +8,7 @@ import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2, Ar
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, demoLogin, isLoading, error, clearError } = useAuthStore();
+  const { login, demoLogin, adminLogin, isLoading, error, clearError } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,6 +40,18 @@ export default function LoginPage() {
       router.push(redirectUrl);
     } else {
       setLocalError(res.error || 'Demo login failed');
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    setLocalError('');
+    clearError();
+    const res = await adminLogin();
+    if (res.success) {
+      const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/settings';
+      router.push(redirectUrl);
+    } else {
+      setLocalError(res.error || 'Admin login failed');
     }
   };
 
@@ -150,13 +162,23 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* 1-Click Fast Demo Login */}
-        <div className="pt-2 border-t border-slate-800 space-y-3">
+        {/* 1-Click Fast Sign In Options */}
+        <div className="pt-2 border-t border-slate-800 space-y-2.5">
+          <button
+            type="button"
+            onClick={handleAdminLogin}
+            disabled={isLoading}
+            className="w-full py-2.5 px-4 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-mono font-bold transition flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.15)]"
+          >
+            <ShieldCheck className="w-4 h-4 text-purple-300" />
+            <span>👑 1-Click Master Admin Sign In (View All Users)</span>
+          </button>
+
           <button
             type="button"
             onClick={handleDemoLogin}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-indigo-950/40 hover:bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-mono font-medium transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-mono font-medium transition flex items-center justify-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
             <span>⚡ 1-Click Demo Operator Sign In</span>
