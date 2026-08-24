@@ -280,18 +280,18 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs text-white">Gemini 2.5 Pro</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">1M TOKENS</span>
+                      <span className="font-bold text-xs text-white">Gemini 1.5 Flash</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">ULTRA FAST</span>
                     </div>
-                    <p className="text-[10px] text-slate-400">Deep reasoning, complex code generation, and prompt expansion.</p>
+                    <p className="text-[10px] text-slate-400">Sub-second generation for chat, image prompts, and tools.</p>
                   </div>
 
                   <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs text-white">Gemini 2.5 Flash</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">ULTRA FAST</span>
+                      <span className="font-bold text-xs text-white">Gemini 2.0 Flash</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">NEXT-GEN</span>
                     </div>
-                    <p className="text-[10px] text-slate-400">Sub-second generation for tools, summaries, and translations.</p>
+                    <p className="text-[10px] text-slate-400">Cutting-edge multimodal intelligence and code generation.</p>
                   </div>
 
                   <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
@@ -299,7 +299,7 @@ export default function SettingsPage() {
                       <span className="font-bold text-xs text-white">Gemini 1.5 Pro</span>
                       <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">2M TOKENS</span>
                     </div>
-                    <p className="text-[10px] text-slate-400">Massive context window for full repository & document analysis.</p>
+                    <p className="text-[10px] text-slate-400">Massive context window for deep reasoning & complex architecture.</p>
                   </div>
                 </div>
               </div>

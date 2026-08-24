@@ -1,13 +1,13 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const env = require('../config/env');
 
-async function callGemini(systemPrompt, userPrompt, modelChoice = 'gemini-2.5-flash') {
+async function callGemini(systemPrompt, userPrompt, modelChoice = 'gemini-1.5-flash') {
   if (!env.geminiApiKey) {
     return null;
   }
 
   const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-  const candidateModels = [modelChoice, 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+  const candidateModels = [modelChoice, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
 
   for (const m of candidateModels) {
     try {
@@ -41,7 +41,7 @@ exports.generateCode = async (req, res) => {
     const systemPrompt = `You are a Senior Principal Engineer. Write production-ready, clean, well-commented ${language} code ${framework ? `using ${framework}` : ''}. Include TypeScript types where applicable, handle edge cases, and provide a short explanation.`;
     const userPrompt = `Requirements:\n${prompt.trim()}`;
 
-    const geminiRes = await callGemini(systemPrompt, userPrompt, 'gemini-2.5-pro');
+    const geminiRes = await callGemini(systemPrompt, userPrompt, 'gemini-1.5-pro');
 
     let output = '';
     if (geminiRes) {
@@ -59,7 +59,8 @@ exports.generateCode = async (req, res) => {
 
     return res.status(200).json({ success: true, code: output, language });
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error('Code generation error:', error);
+    return res.status(500).json({ success: false, error: error.message || 'Code generation failed' });
   }
 };
 
@@ -68,29 +69,34 @@ exports.generateCode = async (req, res) => {
  */
 exports.summarizeText = async (req, res) => {
   try {
-    const { text, format = 'bullet-points' } = req.body;
+    const { text, format = 'bullets', length = 'medium' } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ success: false, error: 'Text to summarize is required' });
     }
 
-    const systemPrompt = `You are an Executive Intelligence Analyst. Summarize the provided content accurately in "${format}" format with bold key concepts and actionable takeaways.`;
-    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-2.5-flash');
+    const systemPrompt = `You are an Executive Intelligence Analyst. Summarize the text clearly. Format: "${format}" (bullet points, executive paragraph, or action items). Length: "${length}".`;
+    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-1.5-flash');
 
     let summary = '';
     if (geminiRes) {
       summary = geminiRes.text;
     } else {
-      const words = text.trim().split(/\s+/);
-      summary = `**Executive Summary:**\nAnalyzed ${words.length} words of source text.\n\n` +
-        `**Key Takeaways:**\n` +
-        `• **Core Focus:** ${words.slice(0, 15).join(' ')}...\n` +
-        `• **Operational Relevance:** Identifies critical system invariants and tactical requirements.\n` +
-        `• **Next Steps:** Review highlighted requirements and integrate into active pipeline.`;
+      const sentences = text.split(/[.?!]\s+/).filter(Boolean);
+      const topSentences = sentences.slice(0, 3);
+      summary = `**Executive Summary:**\n` +
+        topSentences.map((s) => `• ${s.trim()}`).join('\n') +
+        `\n\n*Key Takeaway*: Core message synthesized from ${sentences.length} source passages.`;
     }
 
-    return res.status(200).json({ success: true, summary });
+    return res.status(200).json({
+      success: true,
+      summary,
+      originalLength: text.length,
+      summaryLength: summary.length
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error('Summarization error:', error);
+    return res.status(500).json({ success: false, error: error.message || 'Summarization failed' });
   }
 };
 
@@ -99,24 +105,29 @@ exports.summarizeText = async (req, res) => {
  */
 exports.translateText = async (req, res) => {
   try {
-    const { text, targetLanguage = 'Spanish' } = req.body;
+    const { text, targetLanguage = 'Spanish', tone = 'Natural & Fluent' } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ success: false, error: 'Text to translate is required' });
     }
 
-    const systemPrompt = `You are a certified professional linguistic translator. Translate the text accurately and naturally into ${targetLanguage}. Output ONLY the translated text without extra comments.`;
-    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-2.5-flash');
+    const systemPrompt = `You are a Master Multilingual Translator. Translate the given text accurately and idiomatically into "${targetLanguage}". Tone: "${tone}". Output ONLY the translated text.`;
+    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-1.5-flash');
 
-    let translation = '';
+    let translated = '';
     if (geminiRes) {
-      translation = geminiRes.text;
+      translated = geminiRes.text;
     } else {
-      translation = `[Translated to ${targetLanguage}]: ${text.trim()}`;
+      translated = `[Translated to ${targetLanguage}]: ${text.trim()}`;
     }
 
-    return res.status(200).json({ success: true, translation, targetLanguage });
+    return res.status(200).json({
+      success: true,
+      translated,
+      targetLanguage
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error('Translation error:', error);
+    return res.status(500).json({ success: false, error: error.message || 'Translation failed' });
   }
 };
 
@@ -127,31 +138,60 @@ exports.analyzeSentiment = async (req, res) => {
   try {
     const { text } = req.body;
     if (!text || !text.trim()) {
-      return res.status(400).json({ success: false, error: 'Text is required for sentiment analysis' });
+      return res.status(400).json({ success: false, error: 'Text for sentiment analysis is required' });
     }
 
-    const systemPrompt = `You are a Sentiment & Emotional Intelligence Analyzer. Analyze the emotional tone, sentiment score (0.0 to 1.0), and key emotional triggers of the input text. Format as JSON with fields: { "sentiment": "POSITIVE"|"NEUTRAL"|"NEGATIVE", "score": number, "primaryEmotions": string[], "analysis": string }`;
-    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-2.5-flash');
+    const systemPrompt = `Analyze the sentiment of the provided text. Return a JSON object with:
+{
+  "sentiment": "POSITIVE" | "NEGATIVE" | "NEUTRAL" | "MIXED",
+  "score": number between -1.0 (most negative) and +1.0 (most positive),
+  "emotions": ["emotion1", "emotion2"],
+  "summary": "Brief 1-sentence explanation"
+}
+Output ONLY valid JSON.`;
+
+    const geminiRes = await callGemini(systemPrompt, text.trim(), 'gemini-1.5-flash');
 
     let result = null;
     if (geminiRes) {
       try {
-        const clean = geminiRes.text.replace(/```json|```/g, '').trim();
-        result = JSON.parse(clean);
+        const cleanJson = geminiRes.text.replace(/```json|```/g, '').trim();
+        result = JSON.parse(cleanJson);
       } catch (e) {
-        result = { sentiment: 'POSITIVE', score: 0.88, primaryEmotions: ['Confidence', 'Clarity'], analysis: geminiRes.text };
+        console.warn('Failed to parse Gemini sentiment JSON:', e.message);
       }
-    } else {
+    }
+
+    if (!result) {
+      const lower = text.toLowerCase();
+      const posWords = ['great', 'excellent', 'love', 'good', 'fast', 'amazing', 'super', 'best', 'success'];
+      const negWords = ['bad', 'slow', 'fail', 'error', 'broken', 'worst', 'hate', 'terrible', 'issue'];
+
+      const posCount = posWords.filter((w) => lower.includes(w)).length;
+      const negCount = negWords.filter((w) => lower.includes(w)).length;
+
+      let sentiment = 'NEUTRAL';
+      let score = 0.0;
+
+      if (posCount > negCount) {
+        sentiment = 'POSITIVE';
+        score = 0.75;
+      } else if (negCount > posCount) {
+        sentiment = 'NEGATIVE';
+        score = -0.65;
+      }
+
       result = {
-        sentiment: 'POSITIVE',
-        score: 0.92,
-        primaryEmotions: ['Constructive', 'Optimistic'],
-        analysis: 'Input exhibits clear, constructive intent with actionable focus.'
+        sentiment,
+        score,
+        emotions: sentiment === 'POSITIVE' ? ['Satisfaction', 'Optimism'] : sentiment === 'NEGATIVE' ? ['Frustration'] : ['Objectivity'],
+        summary: `Text reflects an overall ${sentiment.toLowerCase()} emotional tone.`
       };
     }
 
-    return res.status(200).json({ success: true, result });
+    return res.status(200).json({ success: true, analysis: result });
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error('Sentiment analysis error:', error);
+    return res.status(500).json({ success: false, error: error.message || 'Sentiment analysis failed' });
   }
 };

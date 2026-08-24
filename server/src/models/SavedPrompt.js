@@ -27,7 +27,7 @@ const savedPromptSchema = new mongoose.Schema(
     },
     targetModel: {
       type: String,
-      default: 'gemini-2.5-pro'
+      default: 'gemini-1.5-pro'
     },
     tags: [
       {

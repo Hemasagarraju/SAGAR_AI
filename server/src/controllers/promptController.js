@@ -58,7 +58,7 @@ const CURATED_TEMPLATES = [
  */
 exports.optimizePrompt = async (req, res) => {
   try {
-    const { prompt, category = 'general', targetModel = 'gemini-2.5-pro' } = req.body;
+    const { prompt, category = 'general', targetModel = 'gemini-1.5-pro' } = req.body;
     if (!prompt || !prompt.trim()) {
       return res.status(400).json({ success: false, error: 'Prompt text is required' });
     }
@@ -69,7 +69,7 @@ exports.optimizePrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const candidateModels = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'];
+        const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
         const systemPrompt = `You are a World-Class Master Prompt Engineer.
 Transform the user's basic prompt into a highly structured, professional, multi-layered prompt designed for ${targetModel} in the "${category}" domain.
 Include:
@@ -138,11 +138,22 @@ exports.generateSystemPrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-        const resAI = await model.generateContent(
-          `Create a professional system instruction for an AI Agent named "${name}" whose primary mission is "${goal}". Desired tone: "${tone}". Output ONLY the system instruction.`
-        );
-        systemInstruction = resAI.response.text();
+        const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
+        for (const m of candidateModels) {
+          try {
+            const model = genAI.getGenerativeModel({ model: m });
+            const resAI = await model.generateContent(
+              `Create a professional system instruction for an AI Agent named "${name}" whose primary mission is "${goal}". Desired tone: "${tone}". Output ONLY the system instruction.`
+            );
+            const text = resAI.response.text();
+            if (text && text.trim().length > 10) {
+              systemInstruction = text.trim();
+              break;
+            }
+          } catch (err) {
+            console.warn(`[PromptController:SystemPrompt] ${m} fallback:`, err.message);
+          }
+        }
       } catch (err) {
         console.warn('[PromptController:SystemPrompt] Gemini fallback:', err.message);
       }
@@ -200,7 +211,7 @@ exports.savePrompt = async (req, res) => {
       category: category || 'general',
       prompt,
       optimizedPrompt: optimizedPrompt || prompt,
-      targetModel: targetModel || 'gemini-2.5-pro',
+      targetModel: targetModel || 'gemini-1.5-pro',
       tags: tags || []
     });
 

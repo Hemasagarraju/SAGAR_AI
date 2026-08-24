@@ -99,7 +99,7 @@ class AIService {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-flash-1.5',
         messages: [
           { role: 'system', content: WORKFLOW_PROMPT_SYSTEM },
           { role: 'user', content: `Generate an automation workflow for this requirement:\n"${promptText}"` }
@@ -126,7 +126,7 @@ class AIService {
     if (!key) throw new Error('No Gemini API key available');
 
     const genAI = new GoogleGenerativeAI(key);
-    const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+    const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
     let lastError = null;
 
     const fullPrompt = `${WORKFLOW_PROMPT_SYSTEM}\n\nUser Requirement:\n"${promptText}"\n\nGenerate valid JSON workflow graph.`;
@@ -525,7 +525,7 @@ class AIService {
 
     // 1. Try Gemini if API key is provided
     if (env.geminiApiKey) {
-      const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+      const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
       const genAI = new GoogleGenerativeAI(env.geminiApiKey);
       const systemPrompt = `You are SAGAR AI Copilot, an omniscient, hyper-intelligent conversational AI assistant and software engineer created by Hemasagar Raju. The current authenticated user's name is "${userName}".
 Answer ANY question asked by the user accurately, informatively, and concisely with markdown formatting, code blocks, and bullet points.`;
@@ -554,7 +554,7 @@ Answer ANY question asked by the user accurately, informatively, and concisely w
         const response = await axios.post(
           'https://openrouter.ai/api/v1/chat/completions',
           {
-            model: 'google/gemini-2.5-flash',
+            model: 'google/gemini-flash-1.5',
             messages: [
               {
                 role: 'system',

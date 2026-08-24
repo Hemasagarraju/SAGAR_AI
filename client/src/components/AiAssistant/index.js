@@ -26,9 +26,9 @@ export default function AiAssistant() {
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `👋 Hi **${currentUserName}**! I'm your **ChatGPT-style AI Assistant** powered by Google Gemini 2.5 Pro.\n\nAsk me anything: code generation, debugging, creative writing, prompt crafting, or technical explanations.`,
+      text: `👋 Hi **${currentUserName}**! I'm your **ChatGPT-style AI Assistant** powered by Google Gemini AI.\n\nAsk me anything: code generation, debugging, creative writing, prompt crafting, or technical explanations.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      source: 'gemini-2.5-pro'
+      source: 'gemini-1.5-flash'
     }
   ]);
 
@@ -78,7 +78,7 @@ export default function AiAssistant() {
           id: `bot-${Date.now()}`,
           sender: 'assistant',
           text: botData.reply,
-          source: botData.source || 'gemini-2.5-pro',
+          source: botData.source || 'gemini-1.5-flash',
           latencyMs: botData.latencyMs || 20,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };

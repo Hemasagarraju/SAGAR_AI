@@ -37,7 +37,7 @@ export default function PromptStudioPage() {
   const [activeTab, setActiveTab] = useState('optimizer'); // 'optimizer', 'persona', 'templates', 'saved'
   const [promptInput, setPromptInput] = useState('');
   const [targetCategory, setTargetCategory] = useState('image');
-  const [targetModel, setTargetModel] = useState('gemini-2.5-pro');
+  const [targetModel, setTargetModel] = useState('gemini-1.5-pro');
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizedResult, setOptimizedResult] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -281,8 +281,9 @@ export default function PromptStudioPage() {
                         onChange={(e) => setTargetModel(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 text-xs focus:outline-none focus:border-indigo-500 font-mono"
                       >
-                        <option value="gemini-2.5-pro">Google Gemini 2.5 Pro</option>
-                        <option value="gemini-2.5-flash">Google Gemini 2.5 Flash</option>
+                        <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                        <option value="gemini-1.5-flash">Google Gemini 1.5 Flash</option>
+                        <option value="gemini-2.0-flash">Google Gemini 2.0 Flash</option>
                         <option value="midjourney-v6">Midjourney v6 / Flux</option>
                         <option value="gpt-4o">GPT-4o / Claude 3.5</option>
                       </select>

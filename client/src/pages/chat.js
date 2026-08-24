@@ -52,9 +52,9 @@ const SUGGESTIONS = [
 ];
 
 const MODELS = [
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', desc: 'Complex reasoning, coding & architecture (1M tokens)', badge: 'REASONING' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', desc: 'Ultra-fast throughput & low latency (1M tokens)', badge: 'FAST' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', desc: 'High capability multimodal foundation model', badge: 'STABLE' }
+  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', desc: 'Ultra-fast throughput & low latency (1M tokens)', badge: 'FAST' },
+  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', desc: 'Next-Gen multimodal intelligence (1M tokens)', badge: 'NEXT-GEN' },
+  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', desc: 'Complex reasoning, coding & architecture (2M tokens)', badge: 'REASONING' }
 ];
 
 export default function ChatStudioPage() {
@@ -69,7 +69,7 @@ export default function ChatStudioPage() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: `👋 Hello **${user?.name || 'Operator'}**! I am **ChatGPT-style AI Assistant** powered by **Google Gemini 2.5 Pro**.\n\n` +
+      content: `👋 Hello **${user?.name || 'Operator'}**! I am **ChatGPT-style AI Assistant** powered by **Google Gemini AI**.\n\n` +
         `I am ready to assist you with:\n` +
         `• 💻 **Fullstack Software Engineering & Bug Fixing**\n` +
         `• 🎨 **Master AI Prompt Engineering for Images & Video**\n` +
@@ -77,7 +77,7 @@ export default function ChatStudioPage() {
         `• ✍️ **Copywriting, Translations & Executive Summaries**\n\n` +
         `What would you like to build or explore today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      source: 'gemini-2.5-pro'
+      source: 'gemini-1.5-flash'
     }
   ]);
   const [input, setInput] = useState('');
