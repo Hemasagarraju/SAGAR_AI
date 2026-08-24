@@ -125,6 +125,22 @@ class AuthService {
       createdAt: user.createdAt
     };
   }
+
+  async getAllUsers() {
+    const users = await User.find({})
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return users.map((u) => ({
+      id: u._id,
+      name: u.name,
+      email: u.email,
+      role: u.role || 'operator',
+      lastLogin: u.lastLogin,
+      createdAt: u.createdAt
+    }));
+  }
 }
 
 module.exports = new AuthService();

@@ -22,7 +22,10 @@ import {
   Sparkles,
   Zap,
   Check,
-  Loader2
+  Loader2,
+  Users,
+  Mail,
+  Clock
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -39,18 +42,20 @@ export default function SettingsPage() {
   const [testResult, setTestResult] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [keyError, setKeyError] = useState('');
+  const [usersList, setUsersList] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   const fetchHealthAndStatus = async () => {
     try {
       setIsLoadingHealth(true);
-      const [healthRes, statusRes] = await Promise.all([
-        api.get('/health'),
-        api.get('/ai/status')
+      const [healthRes, statusRes, usersRes] = await Promise.all([
+        api.get('/health').catch(() => ({ data: null })),
+        api.get('/ai/status').catch(() => ({ data: null })),
+        api.get('/auth/users').catch(() => ({ data: { users: [] } }))
       ]);
-      setServerHealth(healthRes.data);
-      if (statusRes.data?.success) {
-        setAiStatus(statusRes.data);
-      }
+      if (healthRes.data) setServerHealth(healthRes.data);
+      if (statusRes.data?.success) setAiStatus(statusRes.data);
+      if (usersRes.data?.users) setUsersList(usersRes.data.users);
     } catch (err) {
       console.error('Failed to fetch diagnostics:', err);
     } finally {
@@ -328,6 +333,88 @@ export default function SettingsPage() {
                   <span className="text-slate-500 font-mono text-[10px] uppercase">Email</span>
                   <p className="font-semibold text-slate-200">{user?.email || 'operator@sagar.ai'}</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Registered Users & Operator Directory Card */}
+            <div className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <Users className="w-5 h-5 text-cyan-400" />
+                  <div>
+                    <h3 className="font-bold text-sm text-white">Registered Users & Operators Directory</h3>
+                    <p className="text-[11px] text-slate-400">All registered operator accounts stored in database</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold border border-cyan-500/30">
+                    {usersList.length} USER{usersList.length !== 1 ? 'S' : ''}
+                  </span>
+                  <button
+                    onClick={fetchHealthAndStatus}
+                    className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition"
+                    title="Refresh User List"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {usersList.length === 0 ? (
+                <div className="p-6 rounded-2xl bg-slate-950/50 border border-slate-800 text-center space-y-1">
+                  <p className="text-xs text-slate-400">No external users registered yet.</p>
+                  <p className="text-[11px] text-slate-500">Users who register on /register or log in will appear here automatically.</p>
+                </div>
+              ) : (
+                <div className="space-y-2 overflow-x-auto">
+                  <div className="divide-y divide-slate-800/80 rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+                    {usersList.map((u, i) => (
+                      <div key={u.id || i} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs hover:bg-slate-900/50 transition">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+                            {u.name?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-white flex items-center gap-2">
+                              <span>{u.name}</span>
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                u.role === 'admin'
+                                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                  : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                              }`}>
+                                {(u.role || 'OPERATOR').toUpperCase()}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
+                              <Mail className="w-3 h-3 text-slate-500" />
+                              <span>{u.email}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="text-right text-[11px] text-slate-400 font-mono shrink-0 pl-11 sm:pl-0 space-y-0.5">
+                          <p className="flex items-center gap-1 text-slate-300 sm:justify-end">
+                            <Clock className="w-3 h-3 text-slate-500" />
+                            <span>Joined: {new Date(u.createdAt || Date.now()).toLocaleDateString()}</span>
+                          </p>
+                          {u.lastLogin && (
+                            <p className="text-[10px] text-slate-500">
+                              Last login: {new Date(u.lastLogin).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 font-mono">
+                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Passwords encrypted with bcrypt cost 12 (irreversible)</span>
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">MongoDB Secure Storage</span>
               </div>
             </div>
 

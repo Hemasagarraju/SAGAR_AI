@@ -36,5 +36,6 @@ router.post('/login', authLimiter, [
 router.post('/demo', authLimiter, authController.demoLogin);
 
 router.get('/me', protect, authController.getMe);
+router.get('/users', authController.getAllUsers);
 
 module.exports = router;
