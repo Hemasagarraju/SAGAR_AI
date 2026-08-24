@@ -62,10 +62,11 @@ export default function RegisterPage() {
       </div>
 
       {/* Registration Card */}
+      {/* Register Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Create Operator Account</h2>
-          <p className="text-xs text-slate-400">Join the SAGAR AI Generative Super App as an Operator.</p>
+          <h2 className="text-xl font-bold text-white tracking-tight">Create Account</h2>
+          <p className="text-xs text-slate-400">Join the SAGAR AI platform to save and manage your AI workflows.</p>
         </div>
 
         {(localError || error) && (
@@ -87,13 +88,13 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Operator Full Name</label>
+            <label className="text-xs font-medium text-slate-300">Full Name</label>
             <div className="relative">
               <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
               <input
                 type="text"
                 required
-                placeholder="Alex Morgan"
+                placeholder="Your Name"
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
@@ -114,7 +115,7 @@ export default function RegisterPage() {
               <input
                 type="email"
                 required
-                placeholder="operator@sagar.ai"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);

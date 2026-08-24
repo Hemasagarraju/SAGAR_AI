@@ -75,7 +75,7 @@ export default function LoginPage() {
       {/* Login Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Operator Sign In</h2>
+          <h2 className="text-xl font-bold text-white tracking-tight">Sign In</h2>
           <p className="text-xs text-slate-400">Enter your credentials or use 1-click authentication below.</p>
         </div>
 
@@ -88,13 +88,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Operator Email</label>
+            <label className="text-xs font-medium text-slate-300">Email Address</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
               <input
                 type="email"
                 required
-                placeholder="operator@sagar.ai or hemasagarraju94@gmail.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
