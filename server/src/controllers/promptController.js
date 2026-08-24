@@ -70,7 +70,7 @@ exports.optimizePrompt = async (req, res) => {
     if (env.geminiApiKey) {
       try {
         const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const candidateModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemma-4-26b-a4b-it', 'gemma-4-31b-it', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-pro-latest'];
+        const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash-8b', 'gemini-pro'];
         const systemPrompt = `You are a World-Class Master Prompt Engineer.
 Transform the user's basic prompt into a highly structured, professional, multi-layered prompt designed for ${targetModel} in the "${category}" domain.
 Include:
