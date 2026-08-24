@@ -43,17 +43,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleAdminDemoLogin = async () => {
-    setLocalError('');
-    clearError();
-    const res = await adminDemoLogin();
-    if (res.success) {
-      router.push('/settings');
-    } else {
-      setLocalError(res.error || 'Admin login failed');
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
       {/* Top Floating Controls: Back to Hub & Theme Switcher */}
@@ -161,28 +150,16 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* 1-Click Fast Auth Options */}
+        {/* 1-Click Fast Demo Operator Login */}
         <div className="pt-2 border-t border-slate-800 space-y-2.5">
-          {/* Master Admin 1-Click Access */}
-          <button
-            type="button"
-            onClick={handleAdminDemoLogin}
-            disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-200 text-xs font-mono font-bold transition flex items-center justify-center gap-2 shadow-sm group"
-          >
-            <ShieldCheck className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
-            <span>👑 1-Click Master Admin Sign In (See All Users)</span>
-          </button>
-
-          {/* Standard Demo Operator Access */}
           <button
             type="button"
             onClick={handleDemoLogin}
             disabled={isLoading}
-            className="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-mono transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 rounded-xl bg-indigo-950/40 hover:bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-mono font-medium transition flex items-center justify-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>⚡ 1-Click Demo Operator (Features Only)</span>
+            <span>⚡ 1-Click Demo Operator Sign In</span>
           </button>
         </div>
 
