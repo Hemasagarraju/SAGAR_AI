@@ -86,7 +86,7 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
     { name: 'AI Image Studio', href: '/images', icon: ImageIcon },
     { name: 'AI Prompt Studio', href: '/prompts', icon: PenTool },
     { name: 'AI Tools Hub', href: '/tools', icon: Wrench },
-    { name: 'Gemini Models & API', href: '/settings', icon: Settings },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const { openReviewModal, stats } = useReviewStore();

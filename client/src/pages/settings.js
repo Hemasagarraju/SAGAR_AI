@@ -120,16 +120,16 @@ export default function SettingsPage() {
 
   return (
     <ProtectedRoute>
-      <AppShell pageTitle="AI Studio & System Settings">
+      <AppShell pageTitle="Settings">
         <div className="p-6 lg:p-8 space-y-8 max-w-5xl mx-auto">
           {/* Header */}
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
               <Settings className="w-6 h-6 text-cyan-400" />
-              <span>Google AI Studio & System Settings</span>
+              <span>Settings</span>
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Connect your Google AI Studio account, manage Gemini Pro models, and monitor real-time server health.
+              Manage platform configuration, operator profile, and system telemetry.
             </p>
           </div>
 
