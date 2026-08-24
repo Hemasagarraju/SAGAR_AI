@@ -50,6 +50,7 @@ export default function SettingsPage() {
   const [keyError, setKeyError] = useState('');
   const [usersList, setUsersList] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [adminDebugMode, setAdminDebugMode] = useState(true);
 
   const fetchHealthAndStatus = async () => {
     try {
@@ -369,6 +370,18 @@ export default function SettingsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setAdminDebugMode(!adminDebugMode)}
+                      className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border transition flex items-center gap-1.5 ${
+                        adminDebugMode
+                          ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                      title="Toggle Admin System Debug & Inspection Mode"
+                    >
+                      <Cpu className="w-3.5 h-3.5" />
+                      <span>{adminDebugMode ? 'DEBUG: ON' : 'DEBUG: OFF'}</span>
+                    </button>
                     <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold border border-cyan-500/30">
                       {usersList.length} USER{usersList.length !== 1 ? 'S' : ''}
                     </span>

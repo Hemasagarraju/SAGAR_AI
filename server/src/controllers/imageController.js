@@ -171,7 +171,19 @@ exports.enhancePrompt = async (req, res) => {
  */
 exports.getGallery = async (req, res) => {
   try {
-    const query = req.user ? { owner: req.user._id } : {};
+    let query = {};
+    if (req.user) {
+      if (req.user.role === 'admin' && req.query.debug === 'true') {
+        // Admin debug mode: inspect all system images
+        query = {};
+      } else {
+        // Individual user isolation: only return the requesting user's images
+        query = { owner: req.user._id };
+      }
+    } else {
+      query = { owner: null };
+    }
+
     const images = await AiImage.find(query).sort({ createdAt: -1 }).limit(50);
     return res.status(200).json({
       success: true,
@@ -188,7 +200,11 @@ exports.getGallery = async (req, res) => {
 exports.deleteImage = async (req, res) => {
   try {
     const { id } = req.params;
-    await AiImage.findByIdAndDelete(id);
+    let query = { _id: id };
+    if (req.user && req.user.role !== 'admin') {
+      query.owner = req.user._id;
+    }
+    await AiImage.findOneAndDelete(query);
     return res.status(200).json({ success: true, message: 'Image removed from gallery' });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
