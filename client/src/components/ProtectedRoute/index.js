@@ -5,7 +5,7 @@ import { Cpu, ShieldCheck } from 'lucide-react';
 
 export default function ProtectedRoute({ children, requiredRole = null }) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user, initializeAuth, demoLogin } = useAuthStore();
+  const { isAuthenticated, isLoading, user, initializeAuth } = useAuthStore();
 
   useEffect(() => {
     initializeAuth();
@@ -13,9 +13,9 @@ export default function ProtectedRoute({ children, requiredRole = null }) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      demoLogin();
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
     }
-  }, [isLoading, isAuthenticated, demoLogin]);
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading && !user) {
     return (

@@ -10,9 +10,13 @@ export default function IndexPage() {
 
   useEffect(() => {
     if (!isLoading) {
-      router.replace('/dashboard');
+      if (isAuthenticated) {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/login');
+      }
     }
-  }, [isLoading, router]);
+  }, [isLoading, isAuthenticated, router]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
