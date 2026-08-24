@@ -47,14 +47,14 @@ export default function RegisterPage() {
         <NextLink href="/" className="inline-flex items-center gap-3 group transition-transform hover:scale-105">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </NextLink>
-        <p className="text-xs text-slate-400 font-mono">Create Your SAGAR AI Account</p>
+        <p className="text-xs text-slate-400 font-mono">Create Operator Account</p>
       </div>
 
       {/* Registration Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Create Studio Account</h2>
-          <p className="text-xs text-slate-400">Join the SAGAR AI Generative Super App platform.</p>
+          <h2 className="text-xl font-bold text-white tracking-tight">Create Operator Account</h2>
+          <p className="text-xs text-slate-400">Join the SAGAR AI Generative Super App as an Operator.</p>
         </div>
 
         {(localError || error) && (
@@ -135,37 +135,6 @@ export default function RegisterPage() {
                 }}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
               />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Platform Role</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setRole('operator')}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-1.5 transition ${
-                  role === 'operator'
-                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 font-semibold'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>OPERATOR</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole('admin')}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono flex items-center justify-center gap-1.5 transition ${
-                  role === 'admin'
-                    ? 'bg-cyan-600/20 border-cyan-500 text-cyan-300 font-semibold'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>ADMIN</span>
-              </button>
             </div>
           </div>
 

@@ -65,8 +65,8 @@ export default function LoginPage() {
       {/* Login Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Studio Sign In</h2>
-          <p className="text-xs text-slate-400">Enter your credentials to access the SAGAR AI Super App.</p>
+          <h2 className="text-xl font-bold text-white tracking-tight">Operator Sign In</h2>
+          <p className="text-xs text-slate-400">Enter your operator credentials to access the SAGAR AI Super App.</p>
         </div>
 
         {(localError || error) && (
