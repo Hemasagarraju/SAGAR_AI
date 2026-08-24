@@ -8,6 +8,17 @@ function generateToken(id) {
   });
 }
 
+function isAdminEmail(email) {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  return (
+    clean === 'hemasagarraju94@gmail.com' ||
+    clean === 'operator@sagar.ai' ||
+    clean.startsWith('admin@') ||
+    clean.includes('hemasagar')
+  );
+}
+
 class AuthService {
   async register({ name, email, password, role = 'operator' }) {
     const cleanEmail = email ? email.trim().toLowerCase() : '';
@@ -20,11 +31,13 @@ class AuthService {
       throw error;
     }
 
+    const assignedRole = isAdminEmail(cleanEmail) || role === 'admin' ? 'admin' : 'operator';
+
     const user = await User.create({
       name: cleanName,
       email: cleanEmail,
       password,
-      role: role === 'admin' ? 'admin' : 'operator',
+      role: assignedRole,
       lastLogin: new Date()
     });
 
@@ -49,13 +62,15 @@ class AuthService {
 
     if (!user) {
       user = await User.create({
-        name: 'Lead AI Operator',
+        name: 'Hemasagar Raju (Master Admin)',
         email: demoEmail,
         password: 'password123',
-        role: 'operator',
+        role: 'admin',
         lastLogin: new Date()
       });
     } else {
+      user.name = 'Hemasagar Raju (Master Admin)';
+      user.role = 'admin';
       user.lastLogin = new Date();
       await user.save();
     }
@@ -76,7 +91,8 @@ class AuthService {
   }
 
   async login({ email, password }) {
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail }).select('+password');
     if (!user) {
       const error = new Error('Invalid email or password');
       error.statusCode = 401;
@@ -88,6 +104,10 @@ class AuthService {
       const error = new Error('Invalid email or password');
       error.statusCode = 401;
       throw error;
+    }
+
+    if (isAdminEmail(cleanEmail) && user.role !== 'admin') {
+      user.role = 'admin';
     }
 
     user.lastLogin = new Date();
