@@ -5,10 +5,15 @@ let io = null;
 function initSocket(httpServer, clientUrl) {
   io = new Server(httpServer, {
     cors: {
-      origin: clientUrl || '*',
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      origin: (origin, callback) => {
+        // Universally allow requests from local network, tunnels, and remote devices
+        callback(null, true);
+      },
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true
-    }
+    },
+    transports: ['polling', 'websocket'],
+    allowEIO3: true
   });
 
   io.on('connection', (socket) => {

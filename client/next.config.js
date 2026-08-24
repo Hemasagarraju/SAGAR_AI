@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  allowedDevOrigins: [
+    '*.trycloudflare.com',
+    '*.localtunnel.me',
+    'localtunnel.me',
+    'localhost',
+    '127.0.0.1',
+    '10.166.139.128'
+  ],
   async rewrites() {
     return [
       {

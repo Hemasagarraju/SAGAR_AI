@@ -1,7 +1,7 @@
 {
-  "name": "sagaragent-ai-server",
+  "name": "sagar-ai-server",
   "version": "1.0.0",
-  "description": "SAGARAGENT_AI - Backend Multi-Agent Automation Engine",
+  "description": "SAGAR_AI - Generative AI Super App Backend Engine",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

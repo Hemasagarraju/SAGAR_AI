@@ -27,7 +27,7 @@ export default function ProtectedRoute({ children, requiredRole = null }) {
           <div className="absolute -inset-2 rounded-2xl bg-indigo-500/20 blur-lg -z-10" />
         </div>
         <div className="text-center space-y-2">
-          <h2 className="text-lg font-semibold tracking-wide text-white">SAGARAGENT_AI</h2>
+          <h2 className="text-lg font-semibold tracking-wide text-white">SAGAR AI</h2>
           <p className="text-xs text-slate-400 font-mono flex items-center justify-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             Authenticating Operator Session...

@@ -59,14 +59,14 @@ export default function LoginPage() {
         <div className="inline-flex items-center gap-3">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </div>
-        <p className="text-xs text-slate-400 font-mono">Agentic Operations Console Login</p>
+        <p className="text-xs text-slate-400 font-mono">Generative AI Super App Login</p>
       </div>
 
       {/* Login Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Operator Authentication</h2>
-          <p className="text-xs text-slate-400">Enter your credentials to access the orchestrator console.</p>
+          <h2 className="text-xl font-bold text-white tracking-tight">Studio Sign In</h2>
+          <p className="text-xs text-slate-400">Enter your credentials to access the SAGAR AI Super App.</p>
         </div>
 
         {(localError || error) && (
@@ -84,7 +84,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
-                placeholder="operator@sagaragent.io"
+                placeholder="operator@sagar.ai"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);

@@ -1,71 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const aiService = require('../services/aiService');
-const { protect } = require('../middleware/authMiddleware');
+const { optionalAuth } = require('../middleware/authMiddleware');
 
 /**
  * @route   POST /api/ai/assistant
- * @desc    Chat with SAGARAGENT_AI Assistant & Copilot (Workflow Advice, DAG Generation, Debugging)
- * @access  Public / Protected (Optional token)
+ * @desc    ChatGPT-Style AI Assistant powered by Google Gemini Pro & Flash
+ * @access  Public / Optional Auth
  */
-router.post('/assistant', async (req, res) => {
+router.post('/assistant', optionalAuth, async (req, res) => {
   try {
-    const { message, conversationHistory = [], userName } = req.body;
+    const { message, conversationHistory = [], userName, modelPreference = 'gemini-2.5-pro' } = req.body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, error: 'Message is required.' });
     }
 
     const trimmed = message.trim();
-    const lower = trimmed.toLowerCase();
-    const effectiveUserName = userName || (req.user ? req.user.name : 'Operator');
-
-    // Precise intent classification: Detect if user explicitly wants to synthesize a DAG graph
-    const isWorkflowRequest = 
-      lower.startsWith('create ') ||
-      lower.startsWith('build ') ||
-      lower.startsWith('generate ') ||
-      lower.startsWith('automate ') ||
-      lower.includes('create a workflow') ||
-      lower.includes('build a workflow') ||
-      lower.includes('generate workflow') ||
-      lower.includes('create pipeline') ||
-      lower.includes('build pipeline') ||
-      lower.includes('new workflow') ||
-      (lower.includes('workflow') && (lower.includes('when ') || lower.includes('alert') || lower.includes('trigger') || lower.includes('send ')));
-
+    const effectiveUserName = userName || (req.user ? req.user.name : 'User');
     const startTime = Date.now();
-    let workflowGraph = null;
+
+    const qRes = await aiService.answerQuestion(trimmed, conversationHistory, effectiveUserName);
     let reply = '';
-    let source = 'sagaragent-neural-kernel';
+    let source = 'gemini-2.5-pro';
 
-    // If user prompt asks to create a workflow, compile DAG graph
-    if (isWorkflowRequest) {
-      try {
-        workflowGraph = await aiService.generateWorkflow(trimmed, { user: req.user });
-        source = workflowGraph.source || 'rule_engine';
-      } catch (err) {
-        console.warn('[AI Assistant] Graph synthesis fallback:', err.message);
-      }
-    }
-
-    // Synthesize contextual reply based on question
-    if (workflowGraph && workflowGraph.nodes && workflowGraph.nodes.length > 0) {
-      reply = `⚡ I've synthesized a **${workflowGraph.nodes.length}-node DAG workflow**: **"${workflowGraph.name}"** for your requirement!\n\n` +
-        `**Topology Pipeline:**\n` +
-        workflowGraph.nodes.map((n, i) => `${i + 1}. **${n.data.label}** (${n.type}) — *${n.data.description}*`).join('\n') +
-        `\n\nClick **"Apply to AI Studio Canvas"** below to load this DAG directly into your canvas editor and execute it with real integrations.`;
+    if (typeof qRes === 'object' && qRes !== null) {
+      reply = qRes.reply;
+      source = qRes.source || source;
     } else {
-      const qRes = await aiService.answerQuestion(trimmed, conversationHistory, effectiveUserName);
-      if (typeof qRes === 'object' && qRes !== null) {
-        reply = qRes.reply;
-        source = qRes.source || source;
-      } else {
-        reply = qRes;
-      }
+      reply = qRes;
     }
 
-    const latencyMs = Math.max(12, Date.now() - startTime);
+    const latencyMs = Math.max(15, Date.now() - startTime);
 
     return res.status(200).json({
       success: true,
@@ -73,15 +39,14 @@ router.post('/assistant', async (req, res) => {
         reply,
         source,
         latencyMs,
-        workflowGraph,
         timestamp: new Date().toISOString()
       }
     });
   } catch (error) {
-    console.error('[AI Assistant Route Error]:', error);
+    console.error('[AI Assistant Error]:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Internal assistant error'
+      error: error.message || 'Internal AI assistant error'
     });
   }
 });

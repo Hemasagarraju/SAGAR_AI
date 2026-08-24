@@ -121,17 +121,36 @@ class AIService {
     return this._parseJsonFromLLM(content);
   }
 
-  async _generateWithGemini(promptText) {
-    const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      generationConfig: { responseMimeType: 'application/json' }
-    });
+  async _generateWithGemini(promptText, customApiKey = null) {
+    const key = customApiKey || env.geminiApiKey;
+    if (!key) throw new Error('No Gemini API key available');
+
+    const genAI = new GoogleGenerativeAI(key);
+    const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+    let lastError = null;
 
     const fullPrompt = `${WORKFLOW_PROMPT_SYSTEM}\n\nUser Requirement:\n"${promptText}"\n\nGenerate valid JSON workflow graph.`;
-    const response = await model.generateContent(fullPrompt);
-    const text = response.response.text();
-    return this._parseJsonFromLLM(text);
+
+    for (const modelName of candidateModels) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: { responseMimeType: 'application/json' }
+        });
+        const response = await model.generateContent(fullPrompt);
+        const text = response.response.text();
+        const parsed = this._parseJsonFromLLM(text);
+        if (parsed && parsed.nodes && parsed.nodes.length > 0) {
+          parsed.modelUsed = modelName;
+          return parsed;
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`[AIService] Gemini model ${modelName} fallback: ${err.message}`);
+      }
+    }
+
+    throw lastError || new Error('Failed to generate workflow with Gemini');
   }
 
   _parseJsonFromLLM(rawText) {
@@ -494,35 +513,38 @@ class AIService {
     ) {
       return {
         reply: `👋 Hi **${userName}**! How can I help you today?\n\n` +
-          `I am your **SAGARAGENT_AI Copilot**, ready to assist you with:\n` +
-          `• ⚡ **Automated Workflow Generation** (*"Build a customer triage pipeline with Slack & Sheets"*)\n` +
-          `• 🧠 **Multi-Agent Architecture** (*"How do the Planner, Executor & Validator agents coordinate?"*)\n` +
-          `• 💻 **Coding & Debugging Solutions** (*"Explain Python vs JavaScript for backend microservices"*)\n` +
-          `• 🔒 **Security & AES-256 Vault Encryption** (*"How are sensitive credentials encrypted?"*)\n\n` +
+          `I am your **SAGAR AI Copilot**, ready to assist you with:\n` +
+          `• 💬 **Conversational Intelligence & Reasoning** (*"Explain Transformer Attention Mechanisms"*)\n` +
+          `• 🎨 **AI Image Prompt Engineering** (*"Craft an 8K Midjourney cyberpunk prompt"*)\n` +
+          `• 💻 **Software Engineering & Coding** (*"Write a WebSocket server with auth in Python"*)\n` +
+          `• ⚡ **Executive Summaries & Translations** (*"Summarize this technical architecture"*)\n\n` +
           `What would you like to build or ask today, ${userName}?`,
-        source: 'sagaragent-neural-kernel'
+        source: 'sagar-ai-kernel'
       };
     }
 
     // 1. Try Gemini if API key is provided
     if (env.geminiApiKey) {
-      try {
-        const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const systemPrompt = `You are SAGARAGENT_AI Copilot, an omniscient, hyper-intelligent autonomous AI operations architect, software engineer, and universal assistant created by Hemasagar Raju. The current authenticated user's name is "${userName}".
+      const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+      const genAI = new GoogleGenerativeAI(env.geminiApiKey);
+      const systemPrompt = `You are SAGAR AI Copilot, an omniscient, hyper-intelligent conversational AI assistant and software engineer created by Hemasagar Raju. The current authenticated user's name is "${userName}".
 Answer ANY question asked by the user accurately, informatively, and concisely with markdown formatting, code blocks, and bullet points.`;
-        
-        const prompt = `${systemPrompt}\n\nUser Question: ${trimmed}`;
-        const response = await model.generateContent(prompt);
-        const text = response.response.text();
-        if (text && text.trim().length > 0) {
-          return {
-            reply: text.trim(),
-            source: 'gemini-1.5-flash'
-          };
+
+      for (const modelName of candidateModels) {
+        try {
+          const model = genAI.getGenerativeModel({ model: modelName });
+          const prompt = `${systemPrompt}\n\nUser Question: ${trimmed}`;
+          const response = await model.generateContent(prompt);
+          const text = response.response.text();
+          if (text && text.trim().length > 0) {
+            return {
+              reply: text.trim(),
+              source: `google-${modelName}`
+            };
+          }
+        } catch (err) {
+          console.warn(`[AIService:Chat] Gemini ${modelName} fallback: ${err.message}`);
         }
-      } catch (err) {
-        console.warn('[AIService:Chat] Gemini chat fallback:', err.message);
       }
     }
 
@@ -595,8 +617,8 @@ Answer ANY question asked by the user accurately, informatively, and concisely w
 
     // Creator / Author
     if (q.includes('who made') || q.includes('who created') || q.includes('creator') || q.includes('author') || q.includes('hemasagar')) {
-      return `🚀 **SAGARAGENT_AI** is engineered and architected by **Hemasagar Raju**!\n\n` +
-        `It is an enterprise-grade Autonomous Multi-Agent Operations Automation Platform built with Next.js 14, Node.js, React Flow, Socket.IO, and AES-256 Vault Encryption.\n\n` +
+      return `🚀 **SAGAR AI** is engineered and architected by **Hemasagar Raju**!\n\n` +
+        `It is a high-performance Generative AI Super App Suite featuring AI Image Creation, Master Prompt Engineering, ChatGPT-Style Gemini 2.5 Pro Chat, and Multimodal AI Tools.\n\n` +
         `🔗 GitHub: [https://github.com/Hemasagarraju/sagaragent-ai](https://github.com/Hemasagarraju/sagaragent-ai)`;
     }
 

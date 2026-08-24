@@ -5,6 +5,7 @@ const gmailIntegration = require('../integrations/gmailIntegration');
 const slackIntegration = require('../integrations/slackIntegration');
 const discordIntegration = require('../integrations/discordIntegration');
 const googleSheetsIntegration = require('../integrations/googleSheetsIntegration');
+const geminiIntegration = require('../integrations/geminiIntegration');
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
@@ -16,7 +17,8 @@ class IntegrationService {
       gmail: gmailIntegration,
       slack: slackIntegration,
       discord: discordIntegration,
-      'google-sheets': googleSheetsIntegration
+      'google-sheets': googleSheetsIntegration,
+      gemini: geminiIntegration
     };
   }
 

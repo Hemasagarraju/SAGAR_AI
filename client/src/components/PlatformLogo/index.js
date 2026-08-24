@@ -83,7 +83,7 @@ function PlatformLogo({ size = 'md', animated = true, showBadge = true, textClas
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <span className={`font-black tracking-wider text-white font-mono uppercase bg-gradient-to-r from-white via-cyan-200 to-indigo-300 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(6,182,212,0.4)] ${textClass}`}>
-            SAGARAGENT<span className="text-cyan-400 font-extrabold animate-pulse">_AI</span>
+            SAGAR<span className="text-cyan-400 font-extrabold animate-pulse">_AI</span>
           </span>
           {showBadge && (
             <span className="hidden sm:inline-flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-mono font-bold border border-cyan-500/40 uppercase tracking-widest shadow-[0_0_10px_rgba(6,182,212,0.3)]">

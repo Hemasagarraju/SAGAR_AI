@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
-import Link from 'next/router';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../../store/authStore';
 import { useWorkflowStore } from '../../store/workflowStore';
+import { useReviewStore } from '../../store/reviewStore';
 import { getSocket, joinUserRoom } from '../../services/socket';
 import PlatformLogo from '../PlatformLogo';
 import ThemeSwitcher from '../ThemeSwitcher';
 import AiAssistant from '../AiAssistant';
 import {
   LayoutDashboard,
-  GitFork,
   Sparkles,
-  PlayCircle,
-  Layers,
   Settings,
   Bell,
   LogOut,
@@ -29,7 +26,13 @@ import {
   Menu,
   X,
   Radio,
-  ArrowLeft
+  ArrowLeft,
+  Star,
+  Clock,
+  Image as ImageIcon,
+  PenTool,
+  Bot,
+  Wrench
 } from 'lucide-react';
 
 export default function AppShell({ children, pageTitle = 'Operations' }) {
@@ -78,13 +81,15 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
   }, [user, fetchNotifications, addNotification]);
 
   const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Workflows', href: '/workflows', icon: GitFork },
-    { name: 'AI Prompt Studio', href: '/workflows/builder', icon: Sparkles, highlight: true },
-    { name: 'Live Executions', href: '/executions', icon: PlayCircle },
-    { name: 'Integrations', href: '/integrations', icon: Layers },
-    { name: 'System Settings', href: '/settings', icon: Settings },
+    { name: 'AI Studio Hub', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'ChatGPT Assistant', href: '/chat', icon: Bot, highlight: true },
+    { name: 'AI Image Studio', href: '/images', icon: ImageIcon },
+    { name: 'AI Prompt Studio', href: '/prompts', icon: PenTool },
+    { name: 'AI Tools Hub', href: '/tools', icon: Wrench },
+    { name: 'Gemini Models & API', href: '/settings', icon: Settings },
   ];
+
+  const { openReviewModal, stats } = useReviewStore();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
@@ -139,10 +144,23 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
         </div>
 
         {/* Right: Actions, Notifications & Profile */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Review & Rate Platform Trigger Button */}
+          <button
+            onClick={() => openReviewModal('write')}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 rounded-xl text-xs font-semibold font-mono transition shadow-[0_0_15px_rgba(251,191,36,0.15)] group"
+            title="Give Operator Review & Rating"
+          >
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 transition-transform group-hover:rotate-12 group-hover:scale-110" />
+            <span className="hidden sm:inline">Review</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-400/20 text-amber-200">
+              {stats?.avgRating || '4.9'}★
+            </span>
+          </button>
+
           <NextLink
             href="/workflows/builder"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-lg text-xs font-semibold shadow-glow-indigo transition"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-lg text-xs font-semibold shadow-glow-indigo transition"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Generate with AI</span>
@@ -189,6 +207,17 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                     <span>{(user?.role || 'operator').toUpperCase()}</span>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    openReviewModal('write');
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs text-amber-300 hover:bg-slate-800 transition font-medium"
+                >
+                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <span>Rate Platform Experience</span>
+                </button>
 
                 <NextLink
                   href="/settings"
@@ -252,10 +281,27 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                 </NextLink>
               );
             })}
+
+            {/* LAST ITEM: Operator Review & Rating */}
+            <button
+              onClick={() => openReviewModal('write')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all text-amber-300 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/40 ${
+                isSidebarCollapsed ? 'justify-center px-2' : ''
+              }`}
+              title={isSidebarCollapsed ? 'Rate & Review' : undefined}
+            >
+              <Star className="w-4 h-4 shrink-0 text-amber-400 fill-amber-400" />
+              {!isSidebarCollapsed && <span className="truncate">Rate & Reviews</span>}
+              {!isSidebarCollapsed && (
+                <span className="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-amber-400/20 text-amber-200 font-mono font-bold">
+                  {stats?.avgRating || '4.9'}★
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Sidebar Footer */}
-          <div className="p-3 border-t border-slate-800/80">
+          <div className="p-3 border-t border-slate-800/80 space-y-2">
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
               className="w-full flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition text-xs font-mono"
@@ -272,7 +318,7 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
             <div className="relative w-64 bg-slate-900 border-r border-slate-800 p-4 flex flex-col z-10">
               <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <span className="font-bold text-white font-mono text-sm">SAGARAGENT_AI</span>
+                <span className="font-bold text-white font-mono text-sm">SAGAR AI</span>
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-slate-400 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
@@ -298,6 +344,21 @@ export default function AppShell({ children, pageTitle = 'Operations' }) {
                     </NextLink>
                   );
                 })}
+
+                {/* LAST Mobile Nav Item: Rate Platform */}
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    openReviewModal('write');
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20"
+                >
+                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <span>Rate Platform Experience</span>
+                  <span className="ml-auto text-[10px] px-1.5 py-0.2 rounded bg-amber-400/20 text-amber-200 font-mono">
+                    {stats?.avgRating || '4.9'}★
+                  </span>
+                </button>
               </div>
             </div>
           </div>

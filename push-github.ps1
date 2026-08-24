@@ -1,5 +1,5 @@
 # =======================================================
-# Pushing SAGARAGENT_AI Project to GitHub Repository
+# 🚀 Pushing SAGAR AI Project to GitHub Repository & Triggering CI/CD Deploy
 # =======================================================
 
 $gitExe = "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe"
@@ -7,27 +7,28 @@ if (!(Test-Path $gitExe)) {
     $gitExe = "git"
 }
 
-Write-Host "[1/4] Checking Git Version..." -ForegroundColor Cyan
-& $gitExe --version
+Write-Host "=======================================================" -ForegroundColor Cyan
+Write-Host "🚀 SAGAR AI — GitHub Deployment Pipeline" -ForegroundColor Green
+Write-Host "=======================================================" -ForegroundColor Cyan
+Write-Host ""
 
-Write-Host "[2/4] Staging All Files..." -ForegroundColor Cyan
-& $gitExe add .
+Write-Host "[1/4] Staging all files, AI studios, and GitHub CI/CD workflows..." -ForegroundColor Cyan
+& $gitExe add -A
 
-Write-Host "[3/4] Creating Commit..." -ForegroundColor Cyan
-& $gitExe commit -m "feat: complete SAGARAGENT_AI autonomous multi-agent automation platform"
+Write-Host "[2/4] Creating Commit for SAGAR AI Generative Suite..." -ForegroundColor Cyan
+& $gitExe commit -m "feat: SAGAR AI generative super app, ChatGPT assistant, image creator, prompt studio, and GitHub CI/CD deploy pipeline"
 
-Write-Host "[4/4] Setting Remote Origin and Pushing..." -ForegroundColor Cyan
+Write-Host "[3/4] Ensuring main branch..." -ForegroundColor Cyan
 & $gitExe branch -M main
-& $gitExe remote remove origin 2>$null
-& $gitExe remote add origin https://github.com/Hemasagarraju/sagaragent-ai.git
 
+Write-Host "[4/4] Pushing to GitHub (https://github.com/Hemasagarraju/sagaragent-ai.git)..." -ForegroundColor Cyan
 Write-Host "-------------------------------------------------------" -ForegroundColor Yellow
-Write-Host "Attempting to push to https://github.com/Hemasagarraju/sagaragent-ai.git ..." -ForegroundColor Green
-Write-Host "If prompted, enter your GitHub Username and Personal Access Token (or password)." -ForegroundColor Yellow
+Write-Host "If prompted, please authenticate via your GitHub credentials or Personal Access Token (PAT)." -ForegroundColor Yellow
 Write-Host "-------------------------------------------------------" -ForegroundColor Yellow
 
 & $gitExe push -u origin main
 
 Write-Host "=======================================================" -ForegroundColor Cyan
-Write-Host "🎉 Push Complete!" -ForegroundColor Green
+Write-Host "🎉 GitHub Push & Automated Deployment Triggered Successfully!" -ForegroundColor Green
+Write-Host "👉 View CI/CD Actions: https://github.com/Hemasagarraju/sagaragent-ai/actions" -ForegroundColor Cyan
 Write-Host "=======================================================" -ForegroundColor Cyan

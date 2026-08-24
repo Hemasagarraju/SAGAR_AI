@@ -44,7 +44,7 @@ class AuthService {
   }
 
   async demoLogin() {
-    const demoEmail = 'operator@sagaragent.io';
+    const demoEmail = 'operator@sagar.ai';
     let user = await User.findOne({ email: demoEmail });
 
     if (!user) {

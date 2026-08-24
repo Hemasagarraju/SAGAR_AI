@@ -77,7 +77,7 @@ export default function SettingsPage() {
 
                 <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                   <span className="text-slate-500 font-mono text-[10px] uppercase">Email</span>
-                  <p className="font-semibold text-slate-200">{user?.email || 'operator@sagaragent.io'}</p>
+                  <p className="font-semibold text-slate-200">{user?.email || 'operator@sagar.ai'}</p>
                 </div>
               </div>
             </div>
@@ -181,6 +181,37 @@ export default function SettingsPage() {
                   <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 text-[10px] border border-indigo-500/30">
                     LANGGRAPH COMPATIBLE
                   </span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-950 border border-cyan-500/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-4 h-4 text-cyan-400" />
+                      <span className="font-bold text-sm text-cyan-200">Google Gemini Pro & Flash Engine</span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/30 font-bold">
+                      ACTIVE
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    Powers text-to-image prompt enhancement, master prompt optimization, multi-turn reasoning chat, and multimodal AI tools.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <a
+                      href="https://aistudio.google.com/app/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5"
+                    >
+                      <span>Get Gemini Pro Key (AI Studio) ↗</span>
+                    </a>
+                    <a
+                      href="/integrations"
+                      className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-glow-cyan"
+                    >
+                      <span>Manage Key in Vault →</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

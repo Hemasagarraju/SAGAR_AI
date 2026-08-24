@@ -47,14 +47,14 @@ export default function RegisterPage() {
         <NextLink href="/" className="inline-flex items-center gap-3 group transition-transform hover:scale-105">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </NextLink>
-        <p className="text-xs text-slate-400 font-mono">Provision New Operator Credentials</p>
+        <p className="text-xs text-slate-400 font-mono">Create Your SAGAR AI Account</p>
       </div>
 
       {/* Registration Card */}
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Create Operator Account</h2>
-          <p className="text-xs text-slate-400">Join the multi-agent automation platform.</p>
+          <h2 className="text-xl font-bold text-white tracking-tight">Create Studio Account</h2>
+          <p className="text-xs text-slate-400">Join the SAGAR AI Generative Super App platform.</p>
         </div>
 
         {(localError || error) && (
@@ -103,7 +103,7 @@ export default function RegisterPage() {
               <input
                 type="email"
                 required
-                placeholder="alex.morgan@enterprise.io"
+                placeholder="operator@sagar.ai"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);

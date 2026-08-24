@@ -1,10 +1,41 @@
-# 🚀 SAGARAGENT_AI — Autonomous Multi-Agent AI Automation Platform
+# 🚀 SAGAR AI — Generative AI Super App Suite
 
-An enterprise-grade, distributed AI automation platform powered by autonomous multi-agent pipelines (Planner, Execution, Validation, Recovery, and Monitoring), real-time DAG telemetry, AES-256 encrypted credential vaults, and seamless third-party tool integrations.
+An all-in-one generative AI powerhouse featuring **8K Text-to-Image Creation**, **AI Master Prompt Engineering Studio**, **Google Gemini 2.5 Pro Multimodal Reasoning Chat**, and **Zero-Latency AI Multimodal Tools**.
 
-👉 **Live Demo Web App**: **[https://metallic-cure-installation-animation.trycloudflare.com](https://metallic-cure-installation-animation.trycloudflare.com)** *(Instant access — No password required)*
+👉 **Global Live Demo (Production Speed)**: **[https://volume-safely-restaurant-fought.trycloudflare.com](https://volume-safely-restaurant-fought.trycloudflare.com)**
+👉 **Offline / Same Wi-Fi LAN Access**: **[http://10.166.139.128:3000](http://10.166.139.128:3000)** *(Zero internet required — works over Wi-Fi / Hotspot)*
+👉 **Local Machine**: **[http://localhost:3000](http://localhost:3000)**
 
 ---
+
+## 🌟 Core AI Features
+
+1. **🎨 AI Image Studio (`/images`)**:
+   - High-definition text-to-image synthesis (Flux.1 Ultra + SDXL).
+   - 10+ artistic styles (Photorealistic, Anime, Cyberpunk, 3D Pixar, Cinematic, Surrealism, Fantasy, Watercolor, etc.).
+   - Multiple aspect ratios (`1:1 Square`, `16:9 Landscape`, `9:16 Story/Reel`, `4:3 Classic`).
+   - "✨ Enhance with Gemini" 1-click prompt expander.
+   - High-Res Downloads, Fullscreen Lightbox, and Personal Creation Gallery.
+
+2. **✍️ AI Prompt Engineering Studio (`/prompts`)**:
+   - Master Prompt Optimizer (transforms simple ideas into multi-layered master prompts).
+   - AI System Instructions & Persona Generator.
+   - 30+ Curated Prompt Templates (Coding, Design, Copywriting, Marketing, Reasoning).
+   - Personal Prompt Vault for saving and 1-click testing.
+
+3. **💬 Google Gemini 2.5 Pro Chat (`/chat`)**:
+   - Full-screen conversational AI with 1M context window and multi-turn reasoning.
+   - Dynamic Persona Switcher (Software Architect, Creative Prompt Master, Executive Strategist).
+   - Clean markdown formatting with 1-click code block copying.
+
+4. **⚡ AI Multimodal Tools Hub (`/tools`)**:
+   - **Code Architect**: Clean code generation in 15+ languages.
+   - **Document Summarizer**: Executive briefs & bullet points.
+   - **50+ Language Translator**: Cultural & contextual translation.
+   - **Sentiment Analyzer**: Emotional tone & polarity scoring.
+
+5. **⭐ Operator Review System**:
+   - Preserved at the bottom/last position with session close-time tracking.
 
 ## 🌟 Key Architecture & Capabilities
 

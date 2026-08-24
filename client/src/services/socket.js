@@ -27,7 +27,7 @@ export function getSocket() {
     });
 
     socket.on('connect', () => {
-      console.log('[Socket] Connected to SAGARAGENT_AI real-time stream:', socket.id);
+      console.log('[Socket] Connected to SAGAR AI real-time stream:', socket.id);
     });
 
     socket.on('disconnect', (reason) => {

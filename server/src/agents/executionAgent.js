@@ -80,23 +80,31 @@ class ExecutionAgent {
         
         // If Gemini API key is available, generate real AI output
         if (env.geminiApiKey) {
-          try {
-            const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-            const geminiModel = genAI.getGenerativeModel({ model });
-            const response = await geminiModel.generateContent(prompt);
-            const text = response.response.text();
+          const candidateModels = [model, 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro', 'gemini-1.5-pro'];
+          const genAI = new GoogleGenerativeAI(env.geminiApiKey);
+          let executed = false;
 
-            output = {
-              summary: text,
-              model,
-              promptUsed: prompt,
-              confidenceScore: 0.95,
-              processedAt: new Date().toISOString()
-            };
-            break;
-          } catch (err) {
-            console.warn(`[ExecutionAgent] Gemini API failed: ${err.message}. Using deterministic AI simulator.`);
+          for (const m of candidateModels) {
+            try {
+              const geminiModel = genAI.getGenerativeModel({ model: m });
+              const response = await geminiModel.generateContent(prompt);
+              const text = response.response.text();
+
+              output = {
+                summary: text,
+                model: m,
+                promptUsed: prompt,
+                confidenceScore: 0.98,
+                processedAt: new Date().toISOString()
+              };
+              executed = true;
+              break;
+            } catch (err) {
+              console.warn(`[ExecutionAgent] Gemini model ${m} failed: ${err.message}.`);
+            }
           }
+
+          if (executed) break;
         }
 
         // Deterministic AI synthesis fallback

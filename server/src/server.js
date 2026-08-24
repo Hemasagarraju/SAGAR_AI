@@ -16,6 +16,10 @@ const executionRoutes = require('./routes/executionRoutes');
 const integrationRoutes = require('./routes/integrationRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const imageRoutes = require('./routes/imageRoutes');
+const promptRoutes = require('./routes/promptRoutes');
+const toolRoutes = require('./routes/toolRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -42,7 +46,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
-    service: 'SAGARAGENT_AI Multi-Agent Operations Automation Platform',
+    service: 'SAGAR_AI Generative AI Super App Platform',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: env.nodeEnv,
@@ -57,6 +61,10 @@ app.use('/api/executions', executionRoutes);
 app.use('/api/integrations', integrationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/images', imageRoutes);
+app.use('/api/prompts', promptRoutes);
+app.use('/api/tools', toolRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error Handling Middleware
 app.use(notFound);
@@ -78,7 +86,7 @@ async function bootstrap() {
     // 4. Start HTTP Server
     server.listen(env.port, () => {
       console.log(`=======================================================`);
-      console.log(`🚀 SAGARAGENT_AI Server running on port ${env.port}`);
+      console.log(`🚀 SAGAR_AI Server running on port ${env.port}`);
       console.log(`📡 Client URL: ${env.clientUrl}`);
       console.log(`⚡ Environment: ${env.nodeEnv}`);
       console.log(`=======================================================`);
