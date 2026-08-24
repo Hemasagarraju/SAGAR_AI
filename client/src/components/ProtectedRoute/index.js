@@ -5,7 +5,7 @@ import { Cpu, ShieldCheck } from 'lucide-react';
 
 export default function ProtectedRoute({ children, requiredRole = null }) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user, initializeAuth } = useAuthStore();
+  const { isAuthenticated, isLoading, user, initializeAuth, demoLogin } = useAuthStore();
 
   useEffect(() => {
     initializeAuth();
@@ -13,11 +13,11 @@ export default function ProtectedRoute({ children, requiredRole = null }) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+      demoLogin();
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, demoLogin]);
 
-  if (isLoading) {
+  if (isLoading && !user) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-200">
         <div className="relative flex items-center justify-center mb-6">
@@ -30,15 +30,11 @@ export default function ProtectedRoute({ children, requiredRole = null }) {
           <h2 className="text-lg font-semibold tracking-wide text-white">SAGAR AI</h2>
           <p className="text-xs text-slate-400 font-mono flex items-center justify-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            Authenticating Operator Session...
+            Loading AI Super App...
           </p>
         </div>
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return null;
   }
 
   if (requiredRole && user?.role !== requiredRole && user?.role !== 'admin') {

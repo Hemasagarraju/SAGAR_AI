@@ -66,37 +66,7 @@ export default function LoginPage() {
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-white tracking-tight">Operator Sign In</h2>
-          <p className="text-xs text-slate-400">Please sign in to access SAGAR AI Generative Features.</p>
-        </div>
-
-        {/* 1-Click Instant Demo Login Banner */}
-        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-indigo-950/60 to-cyan-950/40 border border-indigo-500/30 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-indigo-300 flex items-center gap-1.5 font-mono">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              DEMO OPERATOR ACCESS
-            </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold border border-cyan-500/30">
-              NO PASSWORD REQUIRED
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-glow-cyan"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>⚡ 1-Click Instant Demo Operator Sign In</span>
-          </button>
-        </div>
-
-        <div className="relative flex items-center justify-center">
-          <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-900 px-3 text-[11px] font-mono text-slate-500 uppercase shrink-0">
-            or sign in with credentials
-          </span>
-          <div className="border-t border-slate-800 w-full" />
+          <p className="text-xs text-slate-400">Enter your operator credentials to access the SAGAR AI Super App.</p>
         </div>
 
         {(localError || error) && (
