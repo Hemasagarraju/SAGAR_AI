@@ -38,26 +38,16 @@ export const useAuthStore = create((set, get) => ({
             localStorage.setItem('sagaragent_user', JSON.stringify(res.data.user));
           }
         } catch (e) {
-          // If token expired, auto-refresh demo operator session seamlessly
           if (e.response?.status === 401) {
-            await get().demoLogin();
+            get().logout();
           }
         }
       } else {
-        // Auto-initialize demo operator session seamlessly without prompting for login
-        await get().demoLogin();
+        set({ isLoading: false, isAuthenticated: false, user: null, token: null });
       }
     } catch (err) {
       console.error('Failed to initialize auth state:', err);
-      try {
-        await get().demoLogin();
-      } catch (demoErr) {
-        set({
-          isLoading: false,
-          isAuthenticated: true,
-          user: { name: 'Demo Operator', role: 'operator', email: 'operator@sagar.ai' }
-        });
-      }
+      set({ isLoading: false, isAuthenticated: false, user: null, token: null });
     }
   },
 
