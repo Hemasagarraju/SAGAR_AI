@@ -219,9 +219,19 @@ export default function SettingsPage() {
 
                 {/* Notifications & Error feedback */}
                 {keyError && (
-                  <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{keyError}</span>
+                  <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-2">
+                    <div className="flex items-start gap-2 font-semibold">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+                      <span>{keyError}</span>
+                    </div>
+                    <div className="pl-6 text-[11px] text-slate-400 space-y-1">
+                      <p>💡 <strong>Troubleshooting tips:</strong></p>
+                      <ul className="list-disc pl-4 space-y-0.5 text-slate-300">
+                        <li>Ensure the key begins with <code className="text-cyan-300 font-mono">AIzaSy...</code> (typically 39 characters).</li>
+                        <li>Create a brand new key for free at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-cyan-400 underline font-semibold">Google AI Studio ↗</a>.</li>
+                        <li>Check that your Google Cloud / AI Studio project has the <strong>Generative Language API</strong> enabled.</li>
+                      </ul>
+                    </div>
                   </div>
                 )}
 
