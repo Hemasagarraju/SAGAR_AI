@@ -66,40 +66,7 @@ export default function LoginPage() {
       <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-white tracking-tight">Operator Sign In</h2>
-          <p className="text-xs text-slate-400">
-            {router.query.redirect
-              ? 'Please sign in or use 1-Click Demo Access to open Generative AI features.'
-              : 'Enter your operator credentials to access the SAGAR AI Super App.'}
-          </p>
-        </div>
-
-        {router.query.redirect && (
-          <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center gap-2 text-indigo-300 text-xs font-mono">
-            <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
-            <span>Sign in required to access {decodeURIComponent(router.query.redirect).replace(/^\//, '').toUpperCase() || 'AI features'}.</span>
-          </div>
-        )}
-
-        {/* 1-Click Fast Demo Login for instant generative feature access */}
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-extrabold text-xs shadow-glow-cyan transition flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <Sparkles className="w-4 h-4 text-white" />
-            <span>⚡ 1-Click Demo Sign In (Instant AI Access)</span>
-          </button>
-          <p className="text-[11px] text-center text-slate-500 font-mono">Instant access to all Generative AI features with zero registration</p>
-        </div>
-
-        <div className="relative flex items-center justify-center my-2">
-          <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-950 px-3 text-[11px] text-slate-500 font-mono uppercase tracking-wider shrink-0">
-            Or Sign In with Credentials
-          </span>
-          <div className="border-t border-slate-800 w-full" />
+          <p className="text-xs text-slate-400">Enter your operator credentials to access the SAGAR AI Super App.</p>
         </div>
 
         {(localError || error) && (
@@ -157,7 +124,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold text-xs border border-slate-700 transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold text-xs shadow-glow-indigo transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
               <>
@@ -173,7 +140,20 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="text-center text-xs text-slate-400 pt-2 border-t border-slate-800/80">
+        {/* 1-Click Fast Demo Login */}
+        <div className="pt-2 border-t border-slate-800 space-y-3">
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+            className="w-full py-2.5 px-4 rounded-xl bg-indigo-950/40 hover:bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-xs font-mono font-medium transition flex items-center justify-center gap-2"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>⚡ 1-Click Demo Operator Sign In</span>
+          </button>
+        </div>
+
+        <div className="text-center text-xs text-slate-400">
           Don't have an operator account?{' '}
           <NextLink href="/register" className="text-indigo-400 hover:text-indigo-300 font-semibold underline">
             Register Account
