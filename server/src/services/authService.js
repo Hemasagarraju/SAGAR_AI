@@ -13,7 +13,6 @@ function isAdminEmail(email) {
   const clean = email.toLowerCase().trim();
   return (
     clean === 'hemasagarraju94@gmail.com' ||
-    clean === 'operator@sagar.ai' ||
     clean.startsWith('admin@') ||
     clean.includes('hemasagar')
   );
@@ -62,15 +61,15 @@ class AuthService {
 
     if (!user) {
       user = await User.create({
-        name: 'Hemasagar Raju (Master Admin)',
+        name: 'Demo Operator',
         email: demoEmail,
         password: 'password123',
-        role: 'admin',
+        role: 'operator',
         lastLogin: new Date()
       });
     } else {
-      user.name = 'Hemasagar Raju (Master Admin)';
-      user.role = 'admin';
+      user.name = 'Demo Operator';
+      user.role = 'operator';
       user.lastLogin = new Date();
       await user.save();
     }

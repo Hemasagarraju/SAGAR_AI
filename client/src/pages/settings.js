@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import NextLink from 'next/link';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AppShell from '../components/AppShell';
 import { useAuthStore } from '../store/authStore';
@@ -25,7 +26,12 @@ import {
   Loader2,
   Users,
   Mail,
-  Clock
+  Clock,
+  Bot,
+  Image as ImageIcon,
+  PenTool,
+  Wrench,
+  ArrowRight
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -435,68 +441,146 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {/* Server Substrate Telemetry */}
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <Server className="w-5 h-5 text-cyan-400" />
-                  <h3 className="font-bold text-sm text-white">Engine Substrate Telemetry</h3>
+            {/* Server Substrate Telemetry (Admin Only) */}
+            {user?.role === 'admin' && (
+              <div className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <Server className="w-5 h-5 text-cyan-400" />
+                    <h3 className="font-bold text-sm text-white">Engine Substrate Telemetry</h3>
+                  </div>
+                  <button
+                    onClick={fetchHealthAndStatus}
+                    className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition"
+                    title="Refresh Diagnostics"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={fetchHealthAndStatus}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition"
-                  title="Refresh Diagnostics"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                </button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+                  <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Database</span>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div className="font-bold text-white text-sm">MongoDB</div>
+                    <p className="text-[10px] text-emerald-400">Connected</p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">AI Foundation</span>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div className="font-bold text-white text-sm">Google AI Studio</div>
+                    <p className="text-[10px] text-emerald-400">Gemini Active</p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Real-Time Stream</span>
+                      <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+                    </div>
+                    <div className="font-bold text-white text-sm">Socket.IO Server</div>
+                    <p className="text-[10px] text-emerald-400">Online</p>
+                  </div>
+                </div>
+
+                {serverHealth && (
+                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80 text-[11px] font-mono text-slate-400 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <span>Service: </span>
+                      <span className="text-slate-200">{serverHealth.service}</span>
+                    </div>
+                    <div>
+                      <span>Uptime: </span>
+                      <span className="text-cyan-400">{Math.round(serverHealth.uptime || 0)}s</span>
+                    </div>
+                    <div>
+                      <span>Env: </span>
+                      <span className="text-indigo-400">{serverHealth.environment}</span>
+                    </div>
+                  </div>
+                )}
               </div>
+            )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Database</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="font-bold text-white text-sm">MongoDB</div>
-                  <p className="text-[10px] text-emerald-400">Connected</p>
+            {/* Operator Feature Launchpad (Operator Only) */}
+            {user?.role !== 'admin' && (
+              <div className="glass-panel p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+                <div className="border-b border-slate-800 pb-3">
+                  <h3 className="font-bold text-sm text-white">Your Generative AI Features</h3>
+                  <p className="text-[11px] text-slate-400">Direct 1-click access to all active generation studios</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">AI Foundation</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="font-bold text-white text-sm">Google AI Studio</div>
-                  <p className="text-[10px] text-emerald-400">Gemini 2.5 Active</p>
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <NextLink
+                    href="/chat"
+                    className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900/60 transition group flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition">
+                        <Bot className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-cyan-300 transition">AI Copilot</h4>
+                        <p className="text-[10px] text-slate-400">Intelligent coding, answers & multimodal chat</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition" />
+                  </NextLink>
 
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Real-Time Stream</span>
-                    <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-                  </div>
-                  <div className="font-bold text-white text-sm">Socket.IO Server</div>
-                  <p className="text-[10px] text-emerald-400">Online</p>
+                  <NextLink
+                    href="/images"
+                    className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-900/60 transition group flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition">
+                        <ImageIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-indigo-300 transition">AI Image Studio</h4>
+                        <p className="text-[10px] text-slate-400">Generative 8K flux art & photoreal synthesis</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition" />
+                  </NextLink>
+
+                  <NextLink
+                    href="/prompts"
+                    className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-900/60 transition group flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 group-hover:scale-110 transition">
+                        <PenTool className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-purple-300 transition">AI Prompt Studio</h4>
+                        <p className="text-[10px] text-slate-400">Multi-layered prompt optimizer & template vault</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-purple-400 group-hover:translate-x-1 transition" />
+                  </NextLink>
+
+                  <NextLink
+                    href="/tools"
+                    className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/60 transition group flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                        <Wrench className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-emerald-300 transition">AI Tools Hub</h4>
+                        <p className="text-[10px] text-slate-400">Summarizer, code refactor & text transformer</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition" />
+                  </NextLink>
                 </div>
               </div>
-
-              {serverHealth && (
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80 text-[11px] font-mono text-slate-400 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <span>Service: </span>
-                    <span className="text-slate-200">{serverHealth.service}</span>
-                  </div>
-                  <div>
-                    <span>Uptime: </span>
-                    <span className="text-cyan-400">{Math.round(serverHealth.uptime || 0)}s</span>
-                  </div>
-                  <div>
-                    <span>Env: </span>
-                    <span className="text-indigo-400">{serverHealth.environment}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </AppShell>
