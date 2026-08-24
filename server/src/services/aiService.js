@@ -492,14 +492,14 @@ class AIService {
     if (env.geminiApiKey) {
       const candidateModels = [
         'gemini-3.6-flash',
+        'gemini-3.5-flash',
+        'gemini-3.5-flash-lite',
+        'gemini-3.1-flash-lite',
+        'gemma-4-26b-a4b-it',
+        'gemma-4-31b-it',
         'gemini-flash-latest',
-        'gemini-pro-latest',
         'gemini-3.7-flash',
-        'gemini-3.1-pro-preview',
-        'gemini-2.0-flash',
-        'gemini-1.5-flash',
-        'gemini-1.5-pro',
-        'gemini-pro'
+        'gemini-pro-latest'
       ];
       const genAI = new GoogleGenerativeAI(env.geminiApiKey);
       const systemInstruction = `You are SAGAR AI Copilot, a senior expert AI assistant.
