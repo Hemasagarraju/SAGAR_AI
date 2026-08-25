@@ -80,7 +80,7 @@ class ExecutionAgent {
         
         // If Gemini API key is available, generate real AI output
         if (env.geminiApiKey) {
-          const candidateModels = [model, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro'];
+          const candidateModels = [model, 'gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemma-4-31b-it', 'gemma-4-26b-a4b-it'];
           const genAI = new GoogleGenerativeAI(env.geminiApiKey);
           let executed = false;
 

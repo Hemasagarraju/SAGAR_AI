@@ -52,9 +52,9 @@ const SUGGESTIONS = [
 ];
 
 const MODELS = [
-  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', desc: 'Ultra-fast throughput & low latency (1M tokens)', badge: 'FAST' },
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', desc: 'Next-Gen multimodal intelligence (1M tokens)', badge: 'NEXT-GEN' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', desc: 'Complex reasoning, coding & architecture (2M tokens)', badge: 'REASONING' }
+  { id: 'gemini-flash-latest', name: 'Gemini Flash Latest', desc: 'Ultra-fast throughput & real-time responsiveness (1M tokens)', badge: 'FAST' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', desc: 'Next-Gen 2026 intelligence & multimodal reasoning (1M tokens)', badge: 'NEXT-GEN' },
+  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', desc: 'Complex reasoning, advanced coding & architecture (2M tokens)', badge: 'REASONING' }
 ];
 
 export default function ChatStudioPage() {

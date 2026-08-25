@@ -7,7 +7,7 @@ async function callGemini(systemPrompt, userPrompt, modelChoice = 'gemini-1.5-fl
   }
 
   const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-  const candidateModels = [modelChoice, 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash-8b', 'gemini-pro'];
+  const candidateModels = [modelChoice, 'gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemma-4-31b-it', 'gemma-4-26b-a4b-it'];
 
   for (const m of candidateModels) {
     try {

@@ -126,7 +126,7 @@ class AIService {
     if (!key) throw new Error('No Gemini API key available');
 
     const genAI = new GoogleGenerativeAI(key);
-    const candidateModels = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash-8b', 'gemini-pro'];
+    const candidateModels = ['gemini-flash-latest', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemma-4-31b-it', 'gemma-4-26b-a4b-it'];
     let lastError = null;
 
     const fullPrompt = `${WORKFLOW_PROMPT_SYSTEM}\n\nUser Requirement:\n"${promptText}"\n\nGenerate valid JSON workflow graph.`;
@@ -491,11 +491,12 @@ class AIService {
     // 1. Try Gemini if API key is provided
     if (env.geminiApiKey) {
       const candidateModels = [
-        'gemini-1.5-flash',
-        'gemini-2.0-flash',
-        'gemini-1.5-pro',
-        'gemini-1.5-flash-8b',
-        'gemini-pro'
+        'gemini-flash-latest',
+        'gemini-3.6-flash',
+        'gemini-3.7-flash',
+        'gemini-3.5-flash',
+        'gemma-4-31b-it',
+        'gemma-4-26b-a4b-it'
       ];
       const genAI = new GoogleGenerativeAI(env.geminiApiKey);
       const systemInstruction = `You are SAGAR AI Copilot, a senior expert AI assistant.

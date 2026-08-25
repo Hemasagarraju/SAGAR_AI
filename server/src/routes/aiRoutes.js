@@ -50,14 +50,15 @@ async function verifyGeminiApiKey(rawKey) {
 
     // Preference hierarchy for best available model on this key
     const preferredOrder = [
-      'gemini-1.5-flash',
-      'gemini-2.0-flash',
-      'gemini-1.5-pro',
-      'gemini-1.5-flash-8b',
-      'gemini-pro'
+      'gemini-flash-latest',
+      'gemini-3.6-flash',
+      'gemini-3.7-flash',
+      'gemini-3.5-flash',
+      'gemma-4-31b-it',
+      'gemma-4-26b-a4b-it'
     ];
 
-    const chosenModel = preferredOrder.find((p) => modelNames.includes(p)) || modelNames[0] || 'gemini-1.5-flash';
+    const chosenModel = preferredOrder.find((p) => modelNames.includes(p)) || modelNames[0] || 'gemini-flash-latest';
 
     // 2. Perform a fast 1-word generation test using the chosen model
     const genAI = new GoogleGenerativeAI(cleanKey);

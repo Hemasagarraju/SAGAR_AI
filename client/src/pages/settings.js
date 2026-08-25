@@ -299,7 +299,7 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-white">Gemini 1.5 Flash</span>
+                        <span className="font-bold text-xs text-white">Gemini Flash Latest</span>
                         <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">ULTRA FAST</span>
                       </div>
                       <p className="text-[10px] text-slate-400">Sub-second generation for chat, image prompts, and tools.</p>
@@ -307,18 +307,18 @@ export default function SettingsPage() {
 
                     <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-white">Gemini 2.0 Flash</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">NEXT-GEN</span>
+                        <span className="font-bold text-xs text-white">Gemini 3.6 Flash</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">FLAGSHIP</span>
                       </div>
-                      <p className="text-[10px] text-slate-400">Cutting-edge multimodal intelligence and code generation.</p>
+                      <p className="text-[10px] text-slate-400">Next-Gen multimodal intelligence, vision, and code generation.</p>
                     </div>
 
                     <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-white">Gemini 1.5 Pro</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">2M TOKENS</span>
+                        <span className="font-bold text-xs text-white">Gemini 3.7 Flash</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">REASONING</span>
                       </div>
-                      <p className="text-[10px] text-slate-400">Massive context window for deep reasoning & complex architecture.</p>
+                      <p className="text-[10px] text-slate-400">Advanced cognitive reasoning, synthesis & architecture.</p>
                     </div>
                   </div>
                 </div>
