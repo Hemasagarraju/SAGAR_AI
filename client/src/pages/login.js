@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import PlatformLogo from '../components/PlatformLogo';
 import ThemeSwitcher from '../components/ThemeSwitcher';
-import { Sparkles, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
+import { Sparkles, Lock, Mail, User, ArrowRight, AlertCircle, Loader2, ArrowLeft, UserPlus, LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, demoLogin, adminDemoLogin, isLoading, error, clearError } = useAuthStore();
+  const { login, register, demoLogin, isLoading, error, clearError } = useAuthStore();
 
+  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
+
+  useEffect(() => {
+    if (router.query.mode === 'register') {
+      setMode('register');
+    }
+  }, [router.query.mode]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,10 +32,26 @@ export default function LoginPage() {
       return;
     }
 
-    const res = await login(email, password);
-    if (res.success) {
-      const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/dashboard';
-      router.push(redirectUrl);
+    if (mode === 'register') {
+      if (!name.trim()) {
+        setLocalError('Please enter your full name.');
+        return;
+      }
+      if (password.length < 6) {
+        setLocalError('Password must be at least 6 characters.');
+        return;
+      }
+      const res = await register({ name: name.trim(), email: email.trim(), password, role: 'operator' });
+      if (res.success) {
+        const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/dashboard';
+        router.push(redirectUrl);
+      }
+    } else {
+      const res = await login(email.trim(), password);
+      if (res.success) {
+        const redirectUrl = router.query.redirect ? decodeURIComponent(router.query.redirect) : '/dashboard';
+        router.push(redirectUrl);
+      }
     }
   };
 
@@ -65,18 +89,61 @@ export default function LoginPage() {
       <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-cyan-600/20 rounded-full blur-3xl -z-10" />
 
       {/* Header Logo */}
-      <div className="mb-8 text-center space-y-2 flex flex-col items-center">
+      <div className="mb-6 text-center space-y-2 flex flex-col items-center">
         <div className="inline-flex items-center gap-3">
           <PlatformLogo size="lg" textClass="text-2xl font-black" />
         </div>
         <p className="text-xs text-slate-400 font-mono">Generative AI Super App Authentication</p>
       </div>
 
-      {/* Login Card */}
-      <div className="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+      {/* Auth Card with Dual Mode Swap */}
+      <div className="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-5">
+        {/* Modern Segmented Tab Switcher */}
+        <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-bold">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('login');
+              setLocalError('');
+              clearError();
+            }}
+            className={`py-2.5 rounded-xl transition flex items-center justify-center gap-2 ${
+              mode === 'login'
+                ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-glow-indigo'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>Sign In</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setMode('register');
+              setLocalError('');
+              clearError();
+            }}
+            className={`py-2.5 rounded-xl transition flex items-center justify-center gap-2 ${
+              mode === 'register'
+                ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-glow-cyan'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Register Account</span>
+          </button>
+        </div>
+
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">Sign In</h2>
-          <p className="text-xs text-slate-400">Enter your credentials or use 1-click authentication below.</p>
+          <h2 className="text-lg font-bold text-white tracking-tight">
+            {mode === 'login' ? 'Sign In to SAGAR AI' : 'Create Operator Account'}
+          </h2>
+          <p className="text-xs text-slate-400">
+            {mode === 'login'
+              ? 'Enter your credentials to access your AI studios.'
+              : 'Join the platform to build workflows, generate art, and customize prompts.'}
+          </p>
         </div>
 
         {(localError || error) && (
@@ -86,7 +153,30 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          {mode === 'register' && (
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300">Full Name</label>
+              <div className="relative">
+                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="Your Full Name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (localError || error) {
+                      setLocalError('');
+                      clearError();
+                    }
+                  }}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-slate-300">Email Address</label>
             <div className="relative">
@@ -117,7 +207,7 @@ export default function LoginPage() {
               <input
                 type="password"
                 required
-                placeholder="••••••••••••"
+                placeholder={mode === 'register' ? '•••••••••••• (min 6 characters)' : '••••••••••••'}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -139,11 +229,11 @@ export default function LoginPage() {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Authenticating...</span>
+                <span>{mode === 'register' ? 'Creating Account...' : 'Authenticating...'}</span>
               </>
             ) : (
               <>
-                <span>Sign In to Console</span>
+                <span>{mode === 'register' ? 'Register Account' : 'Sign In to Console'}</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -151,7 +241,7 @@ export default function LoginPage() {
         </form>
 
         {/* 1-Click Fast Demo Operator Login */}
-        <div className="pt-2 border-t border-slate-800 space-y-2.5">
+        <div className="pt-2 border-t border-slate-800/80 space-y-2">
           <button
             type="button"
             onClick={handleDemoLogin}
@@ -163,11 +253,39 @@ export default function LoginPage() {
           </button>
         </div>
 
+        {/* Footer Toggle */}
         <div className="text-center text-xs text-slate-400">
-          Don't have an operator account?{' '}
-          <NextLink href="/register" className="text-indigo-400 hover:text-indigo-300 font-semibold underline">
-            Register Account
-          </NextLink>
+          {mode === 'login' ? (
+            <>
+              Don't have an operator account?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setLocalError('');
+                  clearError();
+                }}
+                className="text-cyan-400 hover:text-cyan-300 font-semibold underline"
+              >
+                Register Account
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setLocalError('');
+                  clearError();
+                }}
+                className="text-indigo-400 hover:text-indigo-300 font-semibold underline"
+              >
+                Sign In
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
