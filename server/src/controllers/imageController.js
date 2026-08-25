@@ -123,9 +123,10 @@ exports.generateImage = async (req, res) => {
       seed
     });
 
-    if (owner) {
+    const ownerId = req.user ? req.user._id : null;
+    if (ownerId) {
       notificationService.createNotification({
-        owner,
+        owner: ownerId,
         title: '🎨 AI Artwork Generated',
         message: `Your artwork "${prompt.substring(0, 45)}..." was rendered successfully in Flux 8K.`,
         type: 'success'
